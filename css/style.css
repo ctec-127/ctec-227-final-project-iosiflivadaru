@@ -1,0 +1,97 @@
+body, html {
+  background: rgb(236, 236, 236);
+}
+.bg-dark {
+  background: rgb(31, 37, 41)!important;
+}
+
+.text-link-normal {
+  color: rgb(28, 180, 160)!important;
+}
+
+.text-link {
+  color: rgb(0, 255, 221)!important;
+}
+
+.text-link:hover {
+  color: rgb(28, 180, 160)!important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+#imgLabel {
+  cursor: pointer;
+}
+.col-lg-5 {
+  margin-top: 250px;
+}
+
+.profile {
+  width:155px;
+  height:160px;
+}
+
+@media (max-width: 992px) {
+  .col-lg-5 {
+    margin: 0;
+  }
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+  color: rgb(0, 255, 221)!important;
+  background-color: rgb(31, 37, 41)!important;
+}
+
+a {
+  text-decoration: none!important;
+}
+.tag:hover {
+  cursor: pointer;
+  color: rgb(0, 255, 221)!important;
+}
+
+
+/* Custom checkbox style */
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before{
+  background-color:rgb(31, 37, 41)!important;
+  border: 0 solid white;
+  box-shadow: white!important;
+}
+.custom-checkbox .custom-control-input:checked~.custom-control-label::after{
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath fill='rgb(0, 255, 221)' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3E%3C/svg%3E");
+}
+input:focus, .bootstrap-select .btn:focus {
+  border-color:rgb(28, 180, 160)!important;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 5px rgb(28, 180, 160)!important;
+}
+.bootstrap-select .btn:focus {
+  outline: none !important;
+}
+
+.no-outline:focus {
+  border-color: none!important;
+  box-shadow: none!important;
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+  border-color:rgb(28, 180, 160)!important;
+  box-shadow:none!important;
+}
+.custom-control-input:active ~ .custom-control-label::before {
+  background-color: none!important;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+  color: rgb(28, 180, 160)!important;
+  text-decoration: none;
+  background-color: rgb(31, 37, 41)!important;
+}
+
+.dropdown-menu {
+  max-height: 303px!important;
+}
+.inner {
+  max-height: 247px!important;
+}
