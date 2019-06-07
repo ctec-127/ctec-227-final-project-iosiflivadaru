@@ -1,5 +1,5 @@
-<div class="container mb-5">
-  <div class="row mt-4 mb-5"><!-- First Row Start -->
+<div class="container my-5 pt-3">
+  <div class="row pt-4"><!-- First Row Start -->
     <div class="col-md-12"><!-- col-md-12 Start -->
       <form class="d-flex align-items-start" action="inc/pages/search/getUsersScript.inc.php" method="POST" enctype="multipart/form-data">
         <!-- Search -->

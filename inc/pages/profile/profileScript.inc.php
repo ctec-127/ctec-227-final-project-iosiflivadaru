@@ -9,8 +9,8 @@
   $row = $result->fetch_assoc();
 ?>
 
-<div class="container mb-5">
-  <div class="row mt-4 mb-5"><!-- First Row Start -->
+<div class="container  my-5 pt-3">
+  <div class="row pt-4"><!-- First Row Start -->
 
     <div class="col-md-6"><!-- col-md-6 Start -->
 

@@ -15,7 +15,7 @@
   }
 
   if (password_verify($password, $hashedPassword)) {
-    $sql = "SELECT id, first_name, last_name, profile_img FROM user WHERE `email` = '$email' AND `password` = '$hashedPassword' LIMIT 1";
+    $sql = "SELECT id, first_name, last_name, profile_img, contest_join FROM user WHERE `email` = '$email' AND `password` = '$hashedPassword' LIMIT 1";
 
     $result = $db->query($sql);
     $row = $result->fetch_assoc();
@@ -25,6 +25,7 @@
       $_SESSION['firstName'] = $row['first_name'];
       $_SESSION['lastName'] = $row['last_name'];
       $_SESSION['profileImg'] = $row['profile_img'];
+      $_SESSION['contest'] = $row['contest_join'];
       if (isset($remember)) {
         setcookie('loggedIn', $row['id'], time() + (86400 * 90), "/");
       }

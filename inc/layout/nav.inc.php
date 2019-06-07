@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-sm navbar-light bg-dark d-flex justify-content-center">
+<nav class="navbar navbar-expand-sm navbar-light bg-dark d-flex justify-content-center fixed-top">
 
   
   <?php 

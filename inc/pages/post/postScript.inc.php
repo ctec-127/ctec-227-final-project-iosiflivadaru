@@ -1,5 +1,5 @@
-<div class="container mb-5">
-  <div class="row mt-4 mb-5"><!-- First Row Start -->
+<div class="container my-5 pt-3">
+  <div class="row pt-4"><!-- First Row Start -->
     <div class="col-md-2"></div>
     <div class="col-md-8"><!-- col-md-8 Start -->
 
@@ -16,8 +16,8 @@
           ?></textarea>
         </div>
         <!-- Add Tags -->          
-        <div class="d-flex bd-highlight">
-          <div class="mr-auto bd-highlight">
+        <div class="d-flex bd-highlight mb-3">
+          <div class="bd-highlight">
             <select class="form-control selectpicker w-auto" id="selectTag" data-live-search="true">
               <option value="" hidden>Add Tags</option>
               <?php 
@@ -29,27 +29,28 @@
               ?>
             </select>
           </div>
-
-          <!-- Create New Tag -->
-          <div class="ml-auto bd-highlight">
-            <input type="text" class="form-control w-auto d-inline" id="newTag" name="newTag" placeholder="Create New Tag">
-            <p class="btn bg-dark text-link w-auto float-right px-4 ml-3" id="addTag">Add</p>
-            <div class="invalid-feedback">
-              No spaces allowed!
-            </div>
+          <div class="d-inline-block my-auto ml-2">
+            <!-- <h5 class="d-inline">Tags:</h5> -->
+            <i class="fas fa-2x fa-hashtag d-inline"></i>
+            <p class="d-inline" id="tagList"></p>
           </div>
         </div>
-        <div class="mb-3">
-          <h5 class="d-inline">Tags:</h5>
-          <p class="d-inline" id="tagList"></p>
+
+        <!-- Create New Tag -->
+        <div class="ml-auto bd-highlight d-flex">
+          <input type="text" class="form-control w-auto d-inline" id="newTag" name="newTag" placeholder="Create New Tag">
+          <p class="btn btn-outline-dark text-link-normal w-auto px-4 ml-2 my-auto cursor-pointer" id="addTag">Add</p>
+          <div class="invalid-feedback">
+            No spaces allowed!
+          </div>
         </div>
 
         <!-- Post Image -->        
-        <div class="d-block my-2" id="imgBox">
+        <div class="d-block my-2" id="imgBox" data-contest="<?=$_SESSION['contest']?>">
           <label class="m-0" id="imgLabel" for="postImg">
             <i class="fas fa-2x fa-image mr-1" id='defaultImg'></i>
-            <h5 class="d-inline mb-5">Add Image</h5>
-          </label>        
+            <!-- <h5 class="d-inline mb-5">Add Image</h5> -->
+          </label>
           <input class="mx-auto" type="file" id="postImg" name="postImg" accept=".jpg,.png,.jpeg" hidden>
         </div>
 
@@ -59,7 +60,7 @@
       </form>
 
     </div><!-- col-md-8 End -->
-    <div class="col-md-2"></div>
+    <div class="col-md-2 mt-5"></div>
   </div><!-- First Row End -->
 </div><!-- Container End -->
 
@@ -67,8 +68,9 @@
 <script>  
   var tagArray = [];
 
-  function removeTag(tag) {
+  function removeTag(tag,tagId) {
     $('span#'+tag).remove()
+    $('input#'+tagId).remove()
     $(".tooltip").remove()
     var index = tagArray.indexOf(tag);    
     tagArray.splice(index, 1);    
@@ -94,7 +96,7 @@
     }
     if (flag == true) {
       tagArray.push(tag)
-      $("#tagList").append(`<input type='checkbox' name='tag[]' value='${tagId}' hidden checked><span class='text-link bg-dark px-1 rounded font-weight-normal tag mr-1' data-toggle='tooltip' data-placement='top' title='Click to remove' onclick='removeTag("${tag}")' id='${tag}'>#${tag}</span>`);
+      $("#tagList").append(`<input type='checkbox' name='tag[]' value='${tagId}' id='${tagId}' hidden checked><span class='text-link bg-dark px-1 rounded font-weight-normal tag mr-1' data-toggle='tooltip' data-placement='top' title='Click to remove' onclick='removeTag("${tag}",${tagId})' id='${tag}'>#${tag}</span>`);
     }   
     $(this).prop('selectedIndex',0);
   });
@@ -106,7 +108,11 @@
       reader.onload = function(e) {
         $("#postImgTemp").remove();
         $("#alertNewImage").remove(); 
-        $("#imgBox").after(`<img class='d-block mx-auto' style='width:500px; height:300px;' src='${e.target.result}' alt='User Image' id='postImgTemp'>`); 
+        $("#imgBox").after(`<img class='d-block mx-auto img-fluid' style='width:500px; max-height:100%;' src='${e.target.result}' alt='User Image' id='postImgTemp'>`); 
+        var contest = $("#imgBox").attr("data-contest");
+        if (contest != 1) {
+        $("#imgLabel").after('<div class="custom-control custom-checkbox my-auto"><input type="checkbox" class="custom-control-input text-link" id="customControlAutosizing" name="contest"><label class="custom-control-label" for="customControlAutosizing">Join Contest <i>(you can only join once a week)</i></label></div>');
+        }
       }
       reader.readAsDataURL(input.files[0]);
     }

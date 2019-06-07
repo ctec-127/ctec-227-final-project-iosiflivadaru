@@ -64,23 +64,29 @@
           // add post to database
           $description   = $_POST['description'];
           $userId = $_SESSION['id'];
+
+          // Join Contest
+          $contest = 0;
+          if (isset($_POST['contest'])) {
+            $sql = "UPDATE user SET contest_join = 1 WHERE id = {$_SESSION['id']}";
+            $result = $db->query($sql);
+            $_SESSION['contest'] = 1;
+            $contest = 1;
+          }
           $sql = "INSERT INTO  `post` (
-                    `id`, `user_id`, `description`, `post_img`, `date`
+                    `id`, `user_id`, `description`, `post_img`, `date`, `contest`
                   ) 
                   VALUES (
-                    NULL, ?, ?, 'temp', '$currentDate'
+                    NULL, ?, ?, 'temp', '$currentDate', ?
                   )
                   ";      
           $stmt = $db->prepare($sql);
-          $stmt->bind_param("ss", $userId, $description);
+          $stmt->bind_param("ssi", $userId, $description, $contest);
           $stmt->execute();
           $stmt->close();
-          // $result    = $db->query($sql);
-
-
 
           // get user id so we can update postImg name
-          $sql    = "SELECT id FROM post WHERE user_id = $userId AND post_img = 'temp'";
+          $sql = "SELECT id FROM post WHERE user_id = $userId AND post_img = 'temp'";
           $result = $db->query($sql);
           while ($row = $result->fetch_assoc()) {
             $postId = $row['id'];
