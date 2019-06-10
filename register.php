@@ -6,7 +6,7 @@ if ($_SESSION['loggedIn'] == 0) {
 
 
 
-<div class="container">
+<div class="container my-5 pt-3">
   <div class="row mt-3">
 
     <div class="col-lg-5">      

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 30, 2019 at 07:24 AM
+-- Generation Time: Jun 10, 2019 at 09:47 AM
 -- Server version: 10.1.39-MariaDB
 -- PHP Version: 7.3.5
 
@@ -25,43 +25,41 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `badge`
+-- Table structure for table `comment`
 --
 
-CREATE TABLE `badge` (
+CREATE TABLE `comment` (
   `id` int(11) NOT NULL,
-  `badge` varchar(30) NOT NULL
+  `user_id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL,
+  `comment` varchar(400) NOT NULL,
+  `date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `badge`
---
-
-INSERT INTO `badge` (`id`, `badge`) VALUES
-(1, 'fa-user-check text-primary'),
-(2, 'fa-certificate text-warning'),
-(3, 'fa-code'),
-(4, 'fa-heart text-danger'),
-(5, 'fa-check-circle text-success');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fav_tag`
+-- Table structure for table `contest`
 --
 
-CREATE TABLE `fav_tag` (
+CREATE TABLE `contest` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `tag_id` int(11) NOT NULL
+  `post_id` int(11) NOT NULL,
+  `active` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `fav_tag`
+-- Dumping data for table `contest`
 --
 
-INSERT INTO `fav_tag` (`id`, `user_id`, `tag_id`) VALUES
-(1, 3, 1);
+INSERT INTO `contest` (`id`, `user_id`, `post_id`, `active`) VALUES
+(1, 2, 1, 1),
+(2, 4, 2, 1),
+(12, 1, 1, 1),
+(13, 1, 3, 1),
+(14, 1, 2, 1),
+(15, 4, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -80,11 +78,47 @@ CREATE TABLE `follow` (
 --
 
 INSERT INTO `follow` (`id`, `user_id`, `following`) VALUES
-(18, 1, 3),
-(19, 2, 1),
-(21, 2, 3),
-(23, 3, 1),
-(26, 1, 4);
+(1, 2, 1),
+(2, 4, 2),
+(3, 1, 4),
+(4, 1, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `like`
+--
+
+CREATE TABLE `like` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `market`
+--
+
+CREATE TABLE `market` (
+  `id` int(11) NOT NULL,
+  `item` varchar(30) NOT NULL,
+  `tag` varchar(10) NOT NULL,
+  `price` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `market`
+--
+
+INSERT INTO `market` (`id`, `item`, `tag`, `price`) VALUES
+(1, 'fa-user-check text-primary', 'badge', 200),
+(2, 'fa-award text-warning', 'badge', 200),
+(3, 'fa-code', 'badge', 50),
+(4, 'fa-heart text-danger', 'badge', 70),
+(5, 'fa-check-circle text-success', 'badge', 70),
+(6, 'bio', 'upgrade', 50);
 
 -- --------------------------------------------------------
 
@@ -97,21 +131,18 @@ CREATE TABLE `post` (
   `user_id` int(11) NOT NULL,
   `description` varchar(200) NOT NULL,
   `post_img` varchar(15) NOT NULL,
-  `date` datetime NOT NULL
+  `date` datetime NOT NULL,
+  `contest` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `post`
 --
 
-INSERT INTO `post` (`id`, `user_id`, `description`, `post_img`, `date`) VALUES
-(1, 1, 'First Post', 'noImg', '2019-05-28 00:00:00'),
-(2, 3, 'Jake\'s first post!!!', 'noImg', '2019-05-28 00:00:00'),
-(3, 3, 'yup!', 'noImg', '2019-05-28 23:43:37'),
-(4, 3, 'ORDER BY DATE!!!!', 'post_4.jpg', '2019-05-28 23:44:14'),
-(5, 1, 'I know right?!!!', 'noImg', '2019-05-28 23:44:34'),
-(6, 1, 'This post is from my phone!!', 'noImg', '2019-05-29 05:30:02'),
-(7, 1, 'Post time ago', 'noImg', '2019-05-29 22:08:01');
+INSERT INTO `post` (`id`, `user_id`, `description`, `post_img`, `date`, `contest`) VALUES
+(1, 2, '', 'post_1.jpg', '2019-06-10 07:27:14', 1),
+(2, 4, '', 'post_2.jpg', '2019-06-10 07:27:35', 1),
+(3, 1, 'contest post', 'post_3.jpg', '2019-06-10 09:45:28', 1);
 
 -- --------------------------------------------------------
 
@@ -124,14 +155,6 @@ CREATE TABLE `post_tag` (
   `post_id` int(11) NOT NULL,
   `tag_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `post_tag`
---
-
-INSERT INTO `post_tag` (`id`, `post_id`, `tag_id`) VALUES
-(1, 6, 1),
-(2, 6, 3);
 
 -- --------------------------------------------------------
 
@@ -149,10 +172,7 @@ CREATE TABLE `tag` (
 --
 
 INSERT INTO `tag` (`id`, `tag`) VALUES
-(1, 'php'),
-(2, 'PHP'),
-(3, 'js'),
-(4, 'contest');
+(1, 'php2');
 
 -- --------------------------------------------------------
 
@@ -171,18 +191,19 @@ CREATE TABLE `user` (
   `bio_limit` int(100) NOT NULL,
   `fav_tag_limit` int(11) NOT NULL,
   `contest_tokens` int(11) NOT NULL,
-  `contest_join` tinyint(1) NOT NULL
+  `contest_join` tinyint(1) NOT NULL,
+  `contest_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `profile_img`, `bio`, `bio_limit`, `fav_tag_limit`, `contest_tokens`, `contest_join`) VALUES
-(1, 'Iosif', 'Livadaru', 'iosiflivadaru@yahoo.com', '$2y$10$9Mh4QBI6yC1Qiy5hJ2VpHufSifP44NcK4r2mag3A9nAl/.INTf0mu', '1_Iosif_Livadaru.jpg', 'Hello there! Welcome to my profile! Make sure to follow me and like my posts! Have fun on the app!!!', 100, 1, 0, 0),
-(2, 'Not', 'Iosif', 'ioiliv05@gmail.com', '$2y$10$ZCR5zyHlgxobqZk.FT2o/uH7Edy1Qg56dJZIovI45RYdI9hO9.8VO', '2_Not_Iosif.jpg', '', 100, 1, 0, 0),
-(3, 'Jake', 'Tichenor', 'jake@gmail.com', '$2y$10$XLev/Yi.lUUjkZO5fwFl8eF/L95DidX9F/y9P14Xq66V7.a9Vvd4O', '3_Jacob_Tichenor.jpg', 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam dignissimos tempora cum delectus', 100, 1, 0, 0),
-(4, 'Beniamin', 'Livadaru', 'benyliv@gmail.com', '$2y$10$G3JGQCAPpl.DCVIiw6wK9ex21tj4mfR/c/U3p/klFBD98Mx.EmKQO', '4_Beniamin_Livadaru.jpeg', '', 100, 1, 0, 0);
+INSERT INTO `user` (`id`, `first_name`, `last_name`, `email`, `password`, `profile_img`, `bio`, `bio_limit`, `fav_tag_limit`, `contest_tokens`, `contest_join`, `contest_date`) VALUES
+(1, 'Iosif', 'Livadaru', 'iosiflivadaru@yahoo.com', '$2y$10$DSZevnIA1o4I/SdJXc2Eu.Wljqj2nRaH5alAwiEABLl9S8KtFYHq6', '1_Iosif_Livadaru.jpg', '', 100, 1, 0, 1, '2019-06-17'),
+(2, 'Not', 'Iosif', 'ioiliv05@gmail.com', '$2y$10$16/IlsmtqKmkkDOaXMaLNu2hhvZgU0YQwM1rq9K3vwlUobBg83gQy', '2_Not_Iosif.jpg', '', 100, 1, 0, 1, '2019-06-18'),
+(3, 'Test', 'Test', 'test@test.com', '$2y$10$1hiG2w9FBcWaye8otvbqBectacsv1OEuJMe82JPB7NSiSUZPvUswm', '3_Test_Test.jpg', '', 100, 1, 0, 0, '2019-06-18'),
+(4, 'Jacob', 'Tichenor', 'jake@gmail.com', '$2y$10$w20CbkLr.pLgXdFLnAgON.fODOdsbOixfl5jcVdZhgP7QhpH78yLq', '4_Jacob_Tichenor.jpg', '', 100, 1, 0, 1, '2019-06-18');
 
 -- --------------------------------------------------------
 
@@ -196,34 +217,37 @@ CREATE TABLE `user_badge` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `user_badge`
---
-
-INSERT INTO `user_badge` (`user_id`, `badge_id`) VALUES
-(1, 1),
-(1, 3),
-(3, 4);
-
---
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `badge`
+-- Indexes for table `comment`
 --
-ALTER TABLE `badge`
+ALTER TABLE `comment`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `fav_tag`
+-- Indexes for table `contest`
 --
-ALTER TABLE `fav_tag`
+ALTER TABLE `contest`
   ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `follow`
 --
 ALTER TABLE `follow`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `like`
+--
+ALTER TABLE `like`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `market`
+--
+ALTER TABLE `market`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -255,46 +279,66 @@ ALTER TABLE `user`
 --
 
 --
--- AUTO_INCREMENT for table `badge`
+-- AUTO_INCREMENT for table `comment`
 --
-ALTER TABLE `badge`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+ALTER TABLE `comment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `fav_tag`
+-- AUTO_INCREMENT for table `contest`
 --
-ALTER TABLE `fav_tag`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `contest`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `follow`
 --
 ALTER TABLE `follow`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `like`
+--
+ALTER TABLE `like`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `market`
+--
+ALTER TABLE `market`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `post_tag`
 --
 ALTER TABLE `post_tag`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tag`
 --
 ALTER TABLE `tag`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+DELIMITER $$
+--
+-- Events
+--
+CREATE DEFINER=`root`@`localhost` EVENT `reset contest` ON SCHEDULE EVERY 7 DAY STARTS '2019-06-10 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO UPDATE contest SET active = 0 WHERE active = 1$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

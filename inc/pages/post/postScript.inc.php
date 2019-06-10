@@ -1,13 +1,13 @@
 <div class="container my-5 pt-3">
-  <div class="row pt-4"><!-- First Row Start -->
+  <div class="row pt-3"><!-- First Row Start -->
     <div class="col-md-2"></div>
     <div class="col-md-8"><!-- col-md-8 Start -->
 
       <form method="POST" action="inc/pages/post/functionScript.inc.php" enctype="multipart/form-data">
         <!-- Description -->
         <div class="form-group">
-          <h5><label for="validationTextarea">Description</label></h5>
-          <textarea class="form-control" name="description" placeholder="Post description..."><?php
+          <!-- <h5><label for="validationTextarea">Description</label></h5> -->
+          <textarea class="form-control font-italic" name="description" placeholder="Post description..." rows="4"><?php
           if (isset($_SESSION['description'])) {
             if($_SESSION['description'] != ''){ 
               echo $_SESSION['description'];
@@ -37,7 +37,7 @@
         </div>
 
         <!-- Create New Tag -->
-        <div class="ml-auto bd-highlight d-flex">
+        <div class="ml-auto mb-2 bd-highlight d-flex">
           <input type="text" class="form-control w-auto d-inline" id="newTag" name="newTag" placeholder="Create New Tag">
           <p class="btn btn-outline-dark text-link-normal w-auto px-4 ml-2 my-auto cursor-pointer" id="addTag">Add</p>
           <div class="invalid-feedback">
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Post Image -->        
-        <div class="d-block my-2" id="imgBox" data-contest="<?=$_SESSION['contest']?>">
+        <div class="d-block" id="imgBox" data-contest="<?=$_SESSION['contest']?>">
           <label class="m-0" id="imgLabel" for="postImg">
             <i class="fas fa-2x fa-image mr-1" id='defaultImg'></i>
             <!-- <h5 class="d-inline mb-5">Add Image</h5> -->
@@ -55,7 +55,7 @@
         </div>
 
         <!-- Submit Button -->
-        <hr>
+        <hr class="my-2">
         <button type="submit" class="btn bg-dark text-link w-auto float-right px-4" id="submit">Submit</button>
       </form>
 

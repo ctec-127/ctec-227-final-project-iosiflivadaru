@@ -1,7 +1,7 @@
 <div class="container my-5 pt-3">
-  <div class="row pt-4"><!-- First Row Start -->
-    <div class="col-md-12"><!-- col-md-12 Start -->
-      <form class="d-flex align-items-start" action="inc/pages/search/getUsersScript.inc.php" method="POST" enctype="multipart/form-data">
+  <div class="row pt-3"><!-- First Row Start -->
+    <div class="col-md-8"><!-- col-md-12 Start -->
+      <form class="d-flex align-items-start justify-content-center justify-content-md-start" action="inc/pages/search/getUsersScript.inc.php" method="POST" enctype="multipart/form-data">
         <!-- Search -->
         <div class="form-group">
           <input type="text" class="form-control w-auto" id="search" name="search" placeholder="Search User">
@@ -10,7 +10,7 @@
         <button type="submit" class="btn bg-dark text-link w-auto px-4 ml-3" id="submit">Search</button>
       </form>
     </div><!-- col-md-12 End -->
-
+    <div class="col-md-4"><?=sidePost($db)?></div>
   </div><!-- First Row End -->
 </div><!-- Container End -->
 

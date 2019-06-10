@@ -2,14 +2,14 @@
 if ($_SESSION['loggedIn'] == 0) {
 ?>
 
-    <div class="container">        
+    <div class="container my-5 pt-4">        
 
       <?php
       if (isset($_SESSION['alert-newUser'])) {
         if ($_SESSION['alert-newUser'] == 1) {
           echo "<div class='row'>";
           echo "<div class='col-12'>";
-          echo "<div class='alert alert-success my-3 w-auto text-center' role='alert' id='alertNewImage'>{$_SESSION['alert-imageSuccess']}</div>";
+          echo "<div class='alert alert-success w-auto text-center' role='alert' id='alertNewImage'>{$_SESSION['alert-imageSuccess']}</div>";
           echo "</div>";
           echo "</div>";
           $_SESSION['alert-newUser'] = 0;
@@ -19,7 +19,7 @@ if ($_SESSION['loggedIn'] == 0) {
 
       <div class="row">
 
-        <div class="col-lg-8 mt-3 d-flex align-items-center">
+        <div class="col-lg-8 mt-0 mt-lg-3 d-flex align-items-center">
           
           <div class="jumbotron bg-white shadow-sm py-3 m-0">
             <h3 class="font-weight-light text-center">Welcome to <?=$config['appName'];?>!</h3>

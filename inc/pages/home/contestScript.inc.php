@@ -10,7 +10,7 @@ if (isset($_POST['upvote'])) {
   $result = $db->query($sql);
   
   if (mysqli_num_rows($result) != 1) {
-    $sql = "INSERT INTO `contest`(`id`, `user_id`, `post_id`) VALUES (NULL, $user, $postId)";
+    $sql = "INSERT INTO `contest`(`id`, `user_id`, `post_id`, `active`) VALUES (NULL, $user, $postId, 1)";
     $result = $db->query($sql);
   }
 }

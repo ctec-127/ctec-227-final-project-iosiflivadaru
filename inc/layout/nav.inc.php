@@ -13,20 +13,23 @@
   } else if ($_SESSION['loggedIn'] == 1) {
     echo "<div class='d-flex' style='width:1110px;'>";
   ?>
-  <a class="nav-link text-warning d-sm-none" style="width:75px;" href="?loggedOut"><i class="fas fa-2x fa-store"></i></a>
+  <a class="nav-link text-warning d-sm-none" style="width:75px;" href="market.php"><i class="fas fa-2x fa-store"></i></a>
 
   <a class='navbar-brand d-block mx-auto align-self-center <?= echoActiveClassIfRequestMatches("home");?>' href='home.php'><?=$config['appName']?></a>
 
   <div class="collapse navbar-collapse" id="navbarText">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item active">
-        <a class="nav-link mr-4 <?= echoActiveClassIfRequestMatches("post");?>" href="post.php"><i class="far fa-image mr-2"></i>Post</a>
+        <a class="nav-link mr-3 <?= echoActiveClassIfRequestMatches("post");?>" href="post.php"><i class="far fa-image mr-2"></i>Post</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link mr-4 <?= echoActiveClassIfRequestMatches("search");?>" href="search.php"><i class="fas fa-search mr-2"></i>Search</a>
+        <a class="nav-link mr-3 <?= echoActiveClassIfRequestMatches("search");?>" href="search.php"><i class="fas fa-search mr-2"></i>Search</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link mr-4 <?= echoActiveClassIfRequestMatches("profile");?>" href="profile.php"><i class="fas fa-user mr-2"></i>Profile</a>
+        <a class="nav-link mr-3 <?= echoActiveClassIfRequestMatches("profile");?>" href="profile.php"><i class="fas fa-user mr-2"></i>Profile</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link mr-3 text-warning" href="market.php"><i class="fas fa-store mr-2"></i>Market</a>
       </li>
       <li class="nav-item">
         <a class="nav-link text-danger" href="?loggedOut"><i class="fas fa-power-off mr-2"></i>Log out</a>

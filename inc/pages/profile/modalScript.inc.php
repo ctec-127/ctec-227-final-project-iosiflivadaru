@@ -11,9 +11,7 @@ if (isset($_GET['action'])) {
 }
 
 if (isset($_POST['modal'])) {
-  if ($_POST['modal'] == 'badge') {
-    viewAll($db);
-  } else if ($_POST['modal'] == 'follow') {
+  if ($_POST['modal'] == 'follow') {
     $userId = $_POST['userId'];
     followers($db, $userId);
   } else if ($_POST['modal'] == 'following') {
@@ -25,25 +23,14 @@ if (isset($_POST['modal'])) {
 }
 
 // FUNCTIONS
-function viewAll($db) {  
-  $sql = "SELECT * FROM badge";
-
-  $result = $db->query($sql);
-  echo "<div class='d-flex flex-wrap'>";
-  while ($row = $result->fetch_assoc()) {
-    echo "<i class='fas fa-2x pr-2 mb-2 {$row['badge']}'></i>";
-  }
-  echo "</div>";
-} 
-
 function followers($db, $userId) {
-  $sql = "SELECT user.first_name, user.last_name, profile_img FROM user JOIN follow ON follow.user_id = user.id WHERE follow.following = $userId";
+  $sql = "SELECT user.first_name, user.last_name, profile_img, user.id FROM user JOIN follow ON follow.user_id = user.id WHERE follow.following = $userId";
 
   $result = $db->query($sql);
   while ($row = $result->fetch_assoc()) {
     echo "<div class='mb-3'>";
-    echo "<img class='rounded-circle profile d-inline mr-3' src='img/{$row['profile_img']}' style='width:55px; height:60px;' alt='User Image'>";
-    echo "<h4 class='d-inline'>{$row['first_name']} {$row['last_name']}</h4>";
+    echo "<img class='rounded-circle profile d-inline mr-3 cursor-pointer' onclick='profile({$row['id']})' src='img/{$row['profile_img']}' style='width:55px; height:60px;' alt='User Image'>";
+    echo "<h4 class='d-inline cursor-pointer' onclick='profile({$row['id']})'>{$row['first_name']} {$row['last_name']}</h4>";
     echo "</div>";
   }
   // echo $sql;
@@ -51,13 +38,13 @@ function followers($db, $userId) {
 
 function following($db, $userId) {
   $currentUser = $_SESSION['id'];
-  $sql = "SELECT user.first_name, user.last_name, profile_img, follow.following FROM user JOIN follow ON follow.following = user.id WHERE follow.user_id = $userId";
+  $sql = "SELECT user.first_name, user.last_name, profile_img, user.id, follow.following FROM user JOIN follow ON follow.following = user.id WHERE follow.user_id = $userId";
 
   $result = $db->query($sql);
   while ($row = $result->fetch_assoc()) {
     echo "<div class='mb-3 d-flex'>";
-    echo "<img class='rounded-circle profile d-inline mr-3' src='img/{$row['profile_img']}' style='width:55px; height:60px;' alt='User Image'>";
-    echo "<h4 class='d-flex align-items-center'>{$row['first_name']} {$row['last_name']}</h4>";
+    echo "<img class='rounded-circle profile d-inline mr-3 cursor-pointer' onclick='profile({$row['id']})' src='img/{$row['profile_img']}' style='width:55px; height:60px;' alt='User Image'>";
+    echo "<h4 class='d-flex align-items-center cursor-pointer' onclick='profile({$row['id']})'>{$row['first_name']} {$row['last_name']}</h4>";
     if ($userId == $currentUser) {
       echo "<a class='align-self-center ml-auto text-right text-danger d-inline bg-dark rounded py-1 px-2 mr-1 cursor-pointer' href='inc/pages/profile/modalScript.inc.php?userId={$row['following']}&action=unfollow&edit'>Unfollow</a>";
     }
@@ -130,10 +117,10 @@ function edit($db) {
   <!-- Bio -->
   <div class="mb-3">
     <label for="validationTextarea">Bio <span class="text-muted font-italic">(characters limit: <?=$bioLimit?>)</span></label>
-    <textarea class="form-control" name="bio" placeholder="<?= ($bio == '')? "Tell us something about you!" : '' ?>" maxlength="<?=$bioLimit?>"><?= ($bio != '')? $bio : '' ?></textarea>
+    <textarea class="form-control" name="bio" placeholder="<?= ($bio == '')? "Tell us something about you!" : '' ?>" maxlength="<?=$bioLimit?>" rows="6"><?= ($bio != '')? $bio : '' ?></textarea>
   </div>
   <!-- Favourite Tag -->
-  <div class="form-group">
+  <!-- <div class="form-group">
     <label for="selectTag" class="form-control-label">Favourite Tag</label>
     <select class="form-control selectpicker" id="selectTag" data-live-search="true">
       <option value="" hidden>Tags</option>
@@ -145,7 +132,7 @@ function edit($db) {
         }
       ?>
     </select>
-  </div>
+  </div> -->
   <!-- Allow Change Password -->
   <div class="form-group">
     <div class="custom-control custom-checkbox mr-sm-2">
@@ -158,17 +145,17 @@ function edit($db) {
     <!-- Old Password -->
     <div class="form-group">
       <label for="oldPassword">Old Password</label>
-      <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Password">      
+      <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Old Password">      
     </div>
     <!-- New Password -->
     <div class="form-group">
       <label for="newPassword">New Password</label>
-      <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Password">      
+      <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="New Password">      
     </div>
     <!-- Confirm Password -->
     <div class="form-group">
       <label for="confirmPassword">Confirm Password</label>
-      <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">      
+      <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm New Password">      
     </div>
   </div>
   <!-- Submit Button -->
