@@ -22,10 +22,10 @@ if ($_SESSION['loggedIn'] == 0) {
         <div class="col-lg-8 mt-0 mt-lg-3 d-flex align-items-center">
           
           <div class="jumbotron bg-white shadow-sm py-3 m-0">
-            <h3 class="font-weight-light text-center">Welcome to <?=$config['appName'];?>!</h3>
+            <h3 class="font-weight-light text-center mt-1">Welcome to <?=$config['appName'];?>!</h3>
             <hr class="my-4">
             <h5 class="font-weight-light text-center">Make Friends, share your favourite photos and join our weekly Photo Contest!</h5>
-            <h6 class="text-center"><a class="text-link-normal" href="register.php"><u>Register Now!</u></a></h6>
+            <h5 class="text-center"><a class="text-link-normal" href="register.php"><u>Register Now!</u></a></h5>
           </div>
 
         </div>

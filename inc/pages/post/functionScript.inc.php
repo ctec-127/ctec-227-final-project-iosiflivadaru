@@ -67,21 +67,23 @@
 
           // Join Contest
           $contest = 0;
+          $active = 0;
           if (isset($_POST['contest'])) {
             $sql = "UPDATE user SET contest_join = 1 WHERE id = {$_SESSION['id']}";
             $result = $db->query($sql);
             $_SESSION['contest'] = 1;
             $contest = 1;
+            $active = 1;
           }
           $sql = "INSERT INTO  `post` (
-                    `id`, `user_id`, `description`, `post_img`, `date`, `contest`
+                    `id`, `user_id`, `description`, `post_img`, `date`, `contest`, `active`
                   ) 
                   VALUES (
-                    NULL, ?, ?, 'temp', '$currentDate', ?
+                    NULL, ?, ?, 'temp', '$currentDate', ?, ?
                   )
                   ";      
           $stmt = $db->prepare($sql);
-          $stmt->bind_param("ssi", $userId, $description, $contest);
+          $stmt->bind_param("ssii", $userId, $description, $contest, $active);
           $stmt->execute();
           $stmt->close();
 

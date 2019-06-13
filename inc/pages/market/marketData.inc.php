@@ -10,19 +10,27 @@
   <div class="row pt-3"><!-- First Row Start -->
 
     <div class="col-lg-8"><!-- col-lg-8 Start -->
-      <ul class="nav nav-pills mb-3 d-flex justify-content-center" id="pills-tab" role="tablist">
-        <li class="nav-item pr-1">
+      <ul class="nav nav-pills mb-3 d-flex" id="pills-tab" role="tablist">
+        <li class="nav-item m-0 ml-sm-auto">
           <a class="nav-link text-dark active" id="badges-tab" data-toggle="pill" href="#badges" role="tab" aria-controls="badges" aria-selected="true">Badges</a>
         </li>
-        <li class="nav-item pr-1">
+        <li class="nav-item ">
           <a class="nav-link text-dark" id="upgrade-tab" data-toggle="pill" href="#upgrade" role="tab" aria-controls="upgrade" aria-selected="false">Upgrade Limits</a>
         </li>
+      <?php 
+        $sql = "SELECT contest_tokens FROM user WHERE id = {$_SESSION['id']}";
+        $result = $db->query($sql);
+        $row = $result->fetch_assoc();
+        echo "<li class='mt-2 d-inline-block ml-auto'>";
+          echo "<img src='icons/contestToken.png' class='token' alt=''><strong class='badge badge-warning'>{$row['contest_tokens']}</strong>";
+        echo "</li>";
+      ?>
       </ul>
       <hr>
       <div class="tab-content" id="pills-tabContent">
         <!-- ********************badges******************* -->
         <div class="tab-pane fade show active" id="badges" role="tabpanel" aria-labelledby="badges-tab">
-          <div class='d-flex flex-wrap justify-content-center justify-content-md-start'>
+          <div class='d-flex flex-wrap justify-content-center'>
           <?php 
             $sql = "SELECT * FROM market WHERE id NOT IN (SELECT badge_id FROM user_badge WHERE user_id = {$_SESSION['id']}) AND tag = 'badge'";
             $result = $db->query($sql);

@@ -27,12 +27,12 @@ if ($_SESSION['loggedIn'] == 0) {
     <div class="col-lg-7 mb-3 mb-lg-0 px-5">
       <form action="inc/pages/register/registerScript.inc.php" method="POST" enctype="multipart/form-data">
         <!-- Profile Image -->
-        <div class="d-block text-center my-4" id="imgBox">
+        <div class="d-block text-center my-3" id="imgBox">
           <label class="m-0" id="imgLabel" for="profileImg">    
           <i class="fas fa-10x fa-user-circle" id='defaultImg'></i>
+          <p class="mt-2 text-muted" id="imgText"><i>Add a profile image</i></p>
           </label>        
           <input class="mx-auto" type="file" id="profileImg" name="profileImg" accept=".jpg,.png,.jpeg" hidden>
-          <p class="mt-2 text-muted" id="imgText">Add a profile image</p>
         </div>
         <!-- First Name -->
         <div class="form-group">

@@ -118,7 +118,7 @@ if (isset($_FILES['profileImg']) || $_FILES['profileImg']['name'] == 0) {
           ";
   
           $result = $db->query($sql);
-          echo "success ";
+          // echo "success ";
         } else { // if there are any errors.....
           echo "error1 ";
         }

@@ -33,7 +33,7 @@ function get_time_ago( $time ) {
   }
 }
 
-function posts($db, $currentUser, $page) {
+function posts($db, $currentUser, $page, $par) {
   if (isset($_GET['tag'])) {
     $followFlag = false;
     $sql = "SELECT description, post_img, date, user.first_name, user.last_name, user.profile_img, user.id, post.id AS post_id, contest FROM `post` JOIN user ON post.user_id = user.id JOIN post_tag ON post.id = post_tag.post_id WHERE post_tag.tag_id = {$_GET['tag']} ORDER BY post.date DESC";
@@ -74,7 +74,7 @@ function posts($db, $currentUser, $page) {
     } else if ($page == 2) {
       $homeFeed = 'post.contest = 1 AND';
     }
-    $sql = "SELECT description, post_img, date, user.first_name, user.last_name, user.profile_img, user.id, post.id AS post_id, contest, follow.following FROM `post` LEFT JOIN user ON post.user_id = user.id LEFT JOIN follow ON follow.following = post.user_id WHERE $homeFeed post.user_id = {$currentUser} ORDER BY post.date DESC";
+    $sql = "SELECT DISTINCT description, post_img, date, user.first_name, user.last_name, user.profile_img, user.id, post.id AS post_id, contest, follow.following FROM `post` LEFT JOIN user ON post.user_id = user.id LEFT JOIN follow ON follow.following = post.user_id WHERE $homeFeed post.user_id = {$currentUser} ORDER BY post.date DESC";
     $result = $db->query($sql);
     // echo $sql;
   }
@@ -94,7 +94,7 @@ function posts($db, $currentUser, $page) {
             }
             echo "<span class='text-muted'>$date</span></p>";
             echo "</div>";
-            if ($currentUser == $row['id']) {
+            if ($_SESSION['id'] == $row['id']) {
               echo "<p class='d-inline-block ml-auto ml-3 mb-0 cursor-pointer editPost' data-toggle='modal' data-target='#exampleModalLong' data-postId='$postId'><i class='fas fa-ellipsis-v'></i></p>";
             }
         echo "</div>";
@@ -130,30 +130,45 @@ function posts($db, $currentUser, $page) {
         $usersLikes .= $nrLikes - 10 . " more";
       }
 
-      // Contest SQL
-      if ($row['contest'] == 1) {
-        $sqlContest = "SELECT user_id, post_id, user.first_name, user.last_name, user.profile_img, user.id, active FROM `contest` JOIN user ON user.id = contest.user_id WHERE post_id = $postId";
-        $resultContest = $db->query($sqlContest);
-        $nrUpvote = 0;
-        $usersUpvote = '';
-        $upvoted = false;
-        $resultsContest = [];
-        $activeContest = 2;
+      // Contest SQL      
+      $sqlContest = "SELECT contest.user_id, post_id, user.first_name, user.last_name, user.profile_img, user.id, post.active, post.contest FROM `contest` JOIN user ON user.id = contest.user_id JOIN post ON contest.post_id = post.id WHERE post_id = $postId";
+      $resultContest = $db->query($sqlContest);
+
+      $nrUpvote = 0;
+      $usersUpvote = '';
+      $upvoted = false;
+      $resultsContest = [];
+
+      if (mysqli_num_rows($resultContest) != 0) {
         while ($rowContest = $resultContest->fetch_assoc()) {
+
           $resultsContest[] = $rowContest;
           $nrUpvote += 1;
-          $activeContest = $rowContest['active'];
-          if ($rowContest['user_id'] == $currentUser) {
+          if ($rowContest['user_id'] == $_SESSION['id']) {
             $upvoted = true;
           }
           if ($nrUpvote <= 10) {
             $usersUpvote .= $rowContest['first_name'] . ' ' . $rowContest['last_name'] . '<br>';
-          }
+          }     
         }
         if ($nrUpvote > 10) {
           $usersUpvote .= $nrUpvote - 10 . " more";
         }
       }
+
+      $sqlPostContest = "SELECT contest, active FROM post WHERE id = $postId";
+      $resultPostContest = $db->query($sqlPostContest);
+      $hasContest = 0;
+      $activeContest = 0;
+      while ($rowPostContest = $resultPostContest->fetch_assoc()) {
+        if ($rowPostContest['contest'] == 1) {
+          $hasContest = 1;
+        }
+        if ($rowPostContest['active'] == 1) {
+          $activeContest = 1;
+        }
+      }
+      
       // Comments SQL
       $sqlComment = "SELECT comment.comment,comment.date,user.first_name,user.last_name, user.profile_img, user.id FROM comment JOIN user ON comment.user_id = user.id WHERE comment.post_id = $postId ORDER BY comment.date DESC";
       $resultComment = $db->query($sqlComment);
@@ -203,7 +218,7 @@ function posts($db, $currentUser, $page) {
         if ($nrTags <= 5) {
           $tagNames .= "<i class=\"\">#" . $rowTag['tag'] . "</i><br>";
         }
-        $displayTags .= "<a href='home.php?tag={$rowTag['id']}'><span class='text-link bg-dark px-1 rounded font-weight-normal d-inline-block ml-1 mb-1 cursor-pointer'>#{$rowTag['tag']}</span></a>";
+        $displayTags .= "<a href='home.php?tag={$rowTag['id']}'><span class='text-link bg-dark px-1 rounded font-weight-normal d-inline-block ml-1 my-1 cursor-pointer'>#{$rowTag['tag']}</span></a>";
       }
       if ($nrTags > 5) {
         $tagNames .= $nrTags - 5 . " more";
@@ -214,45 +229,53 @@ function posts($db, $currentUser, $page) {
         $resultsTag[] = $rowComment;
       }
 
+      if ($par == 1) {
+        $copy = 'a';
+      } else {
+        $copy = '';
+      }
+
       // ************CARD BODY***********
       echo "<div class='card-body p-1'>";
         // like button
         echo "<button type='button' class='btn no-outline rounded-0 border-right'>";
         if ($liked == true) {
           // echo "<span data-toggle='collapse' data-target='#collapseLike$postId'>";
-          echo "<i class='fas fa-thumbs-up' id='dislike$postId' onclick='dislike($postId)'></i> ";
+          echo "<i class='fas fa-thumbs-up' id='dislike$postId$copy' onclick='dislike($postId,\"$copy\")'></i> ";
         } else {
-          // echo "<span data-toggle='collapse' data-target='#collapseLike$postId'>";
-          echo "<i class='far fa-thumbs-up' id='like$postId' onclick='like($postId)'></i> ";
+          // echo "<span data-toggle='collapse' data-target='#collapseLike$postId$copy'>";
+          echo "<i class='far fa-thumbs-up' id='like$postId$copy' onclick='like($postId,\"$copy\")'></i> ";
         }
-        echo "<span class='badge badge-secondary p-1' data-toggle='collapse' data-target='#collapseLike$postId' data-toggleTool='tooltip' data-html='true' title='$usersLikes'>$nrLikes</span></button>";
+        echo "<span class='badge badge-secondary p-1' data-toggle='collapse' data-target='#collapseLike$postId$copy' data-toggleTool='tooltip' data-html='true' title='$usersLikes'>$nrLikes</span></button>";
         // comment button
-        echo "<button class='btn no-outline rounded-0 border-right collapsed' data-toggle='collapse' data-target='#collapse$postId'><span data-toggleTool='tooltip' data-html='true' title='$usersComments'><i class='far fa-comment'></i> <span class='badge badge-secondary p-1'>$nrComments</span></span></button>";
+        echo "<button class='btn no-outline rounded-0 border-right collapsed' data-toggle='collapse' data-target='#collapse$postId$copy'><span data-toggleTool='tooltip' data-html='true' title='$usersComments'><i class='far fa-comment'></i> <span class='badge badge-secondary p-1'>$nrComments</span></span></button>";
         // tag button
-        echo "<button class='btn no-outline rounded-0 border-right collapsed' data-toggle='collapse' data-target='#collapseTag$postId'><i class='fas fa-hashtag'></i> <span class='badge badge-secondary p-1' data-toggleTool='tooltip' data-html='true' title='$tagNames'>$nrTags</span></button>";
+        echo "<button class='btn no-outline rounded-0 border-right collapsed' data-toggle='collapse' data-target='#collapseTag$postId$copy'><i class='fas fa-hashtag'></i> <span class='badge badge-secondary p-1' data-toggleTool='tooltip' data-html='true' title='$tagNames'>$nrTags</span></button>";
         // contest button
         
-        echo "<button type='button' class='btn no-outline rounded-0 border-right'>";
-        if ($activeContest) {
-          if ($upvoted == true) {
-            echo "<i class='fas fa-star' id='downvote$postId' onclick='downvote($postId)'></i> ";
+        if ($hasContest == 1) {
+          echo "<button type='button' class='btn no-outline rounded-0 border-right'>";
+          if ($activeContest) {
+            if ($upvoted == true) {
+              echo "<i class='fas fa-star' id='downvote$postId$copy' onclick='downvote($postId,\"$copy\")'></i> ";
+            } else {
+              echo "<i class='far fa-star' id='upvote$postId$copy' onclick='upvote($postId,\"$copy\")'></i> ";
+            }
           } else {
-            echo "<i class='far fa-star' id='upvote$postId' onclick='upvote($postId)'></i> ";
+            echo "<i class='fas fa-star'></i> ";
           }
-        } else {
-          echo "<i class='fas fa-star'></i> ";
+          echo "<span class='badge badge-secondary p-1' data-toggle='collapse' data-target='#collapseContest$postId$copy' data-toggleTool='tooltip' data-html='true' title='$usersUpvote'>$nrUpvote</span></button>";
         }
-        echo "<span class='badge badge-secondary p-1' data-toggle='collapse' data-target='#collapseContest$postId' data-toggleTool='tooltip' data-html='true' title='$usersUpvote'>$nrUpvote</span></button>";
         
         
         echo "</div>"; //ending of CARD BODY
 
         // accordion for each post so I can switch from likes to comments to tags
-        echo "<div class='accordion' id='accordionExample$postId'>";
+        echo "<div class='accordion' id='accordionExample$postId$copy'>";
         
           // contest
-          echo "<div id='collapseContest$postId' class='collapse multi-collapse' data-parent='#accordionExample$postId'>"; 
-          echo "<div class='pb-3 px-3 border-top' id='displayContest$postId'>";
+          echo "<div id='collapseContest$postId$copy' class='collapse multi-collapse' data-parent='#accordionExample$postId$copy'>"; 
+          echo "<div class='pb-3 px-3 border-top' id='displayContest$postId$copy'>";
             foreach ($resultsContest as $row) {
               echo "<div class='d-flex justify-content-start align-items-center mt-3' data-userContest='{$row['first_name']} {$row['last_name']}'>";
                 echo "<img class='rounded-circle float-left profile d-inline-block cursor-pointer' onclick='profile({$row['id']})' src='img/{$row['profile_img']}' style='width:35px; height:35px;' alt='User Image'>" . "<h6 class='d-inline m-0 ml-2 cursor-pointer' onclick='profile({$row['id']})'>{$row['first_name']} {$row['last_name']}</h6>";  
@@ -262,20 +285,20 @@ function posts($db, $currentUser, $page) {
         echo "</div>"; // ending of contest
 
           // tags
-          echo "<div id='collapseTag$postId' class='collapse multi-collapse' data-parent='#accordionExample$postId'>"; 
+          echo "<div id='collapseTag$postId$copy' class='collapse multi-collapse' data-parent='#accordionExample$postId$copy'>"; 
             echo "<div class='py-3 px-3 border-top'>$displayTags</div>";
           echo "</div>"; // ending of tags
 
           // comments
-          echo "<div id='collapse$postId' class='collapse multi-collapse' data-parent='#accordionExample$postId'>";    
+          echo "<div id='collapse$postId$copy' class='collapse multi-collapse' data-parent='#accordionExample$postId$copy'>";    
           echo "<div class='card card-body pb-0 rounded-0 border-left-0 border-bottom-0 border-right-0'>";
             // comment input
             echo "<div class='d-flex justify-content-start align-items-center mb-3'>";
               echo "<img class='rounded-circle float-left profile d-inline-block cursor-pointer' onclick='profile({$currentUser})' src='img/{$_SESSION['profileImg']}' style='width:35px; height:35px;' alt='User Image'>" . "<h6 class='d-inline m-0 ml-2'>{$_SESSION['firstName']} {$_SESSION['lastName']}</h6>";      
             echo "</div>";
-            echo "<div class='d-flex mb-3' id='commentInput$postId'>";
+            echo "<div class='d-flex mb-3' id='commentInput$postId$copy'>";
               echo "<input type='text' class='form-control comment$postId'  name='comment' placeholder='Leave a Comment...'>";
-              echo "<button class='btn bg-dark text-link w-auto px-4 ml-3 submit' data-postId='$postId'>Submit</button>";
+              echo "<button class='btn bg-dark text-link w-auto px-4 ml-3 submit' data-postId='$postId$copy'>Submit</button>";
             echo "</div>";
                           
           $commentFlag = true;
@@ -305,8 +328,8 @@ function posts($db, $currentUser, $page) {
         echo "</div>"; //ending of comments
 
         // likes
-        echo "<div id='collapseLike$postId' class='collapse multi-collapse' data-parent='#accordionExample$postId'>"; 
-          echo "<div class='pb-3 px-3 border-top' id='displayLikes$postId'>";
+        echo "<div id='collapseLike$postId$copy' class='collapse multi-collapse' data-parent='#accordionExample$postId$copy'>"; 
+          echo "<div class='pb-3 px-3 border-top' id='displayLikes$postId$copy'>";
             foreach ($resultsLike as $row) {
               echo "<div class='d-flex justify-content-start align-items-center mt-3' data-userLike='{$row['first_name']} {$row['last_name']}'>";
                 echo "<img class='rounded-circle float-left profile d-inline-block cursor-pointer' onclick='profile({$row['id']})' src='img/{$row['profile_img']}' style='width:35px; height:35px;' alt='User Image'>" . "<h6 class='d-inline m-0 ml-2 cursor-pointer' onclick='profile({$row['id']})'>{$row['first_name']} {$row['last_name']}</h6>";  
@@ -318,11 +341,16 @@ function posts($db, $currentUser, $page) {
       echo "</div>"; // accordion
     echo "</div>";
   } // ending while loop
+  if (mysqli_num_rows($result) == 0) {
+    echo "<div class='jumbotron py-3' id='noResult'>
+    <h5 class='text-center m-0'>Join the contest, Follow people and Share your thoughts!!</h5>
+    </div>";
+  }
 }
 
 function sidePost($db) { ?>
   <div class='card mb-4 shadow-sm'>
-    <div class='px-3 searchUsers card-header w-100 text-center' >
+    <div class='px-3 card-header w-100 text-center' >
       <h4 class="text-center m-0 d-inline-block">Current Contest Ranks <sup><i class="fas fa-sm fa-info-circle d-inline-block cursor-pointer" data-toggle="modal" data-target="#contestInfo"></i></sup></h4>
     </div>
     <div class='card-body p-3'>
@@ -439,7 +467,7 @@ function sidePost($db) { ?>
   </div> <!-- Ending Contest Ranks -->
 
   <div class='card mb-4 shadow-sm'>
-    <div class='px-3 searchUsers card-header' >
+    <div class='px-3 card-header' >
       <h4 class="text-center m-0">People you may know:</h4>
     </div>
     <div class='card-body px-3 py-0 border-bottom'>
@@ -525,8 +553,10 @@ function contestInfo() {?>
         </div>
         <div class="modal-body">
           <ul>
+            <li>You can ONLY join the contest with an image</li>
             <li>Contest lasts 7 days</li>
-            <li>The rank system is based on the amount of starts you get on your post</li>
+            <li>The rank system is based on the amount of stars you get on your post</li>
+            <li>You can ONLY <strong>star</strong> current contest posts</li>
             <hr>
             <li>Rank 1: <img src='icons/contestToken.png' class='token' alt='Contest Token'><strong>20</strong></li>
             <li>Rank 2: <img src='icons/contestToken.png' class='token' alt='Contest Token'><strong>10</strong></li>

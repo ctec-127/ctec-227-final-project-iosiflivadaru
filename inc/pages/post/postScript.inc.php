@@ -7,7 +7,7 @@
         <!-- Description -->
         <div class="form-group">
           <!-- <h5><label for="validationTextarea">Description</label></h5> -->
-          <textarea class="form-control font-italic" name="description" placeholder="Post description..." rows="4"><?php
+          <textarea class="form-control" name="description" placeholder="Post description..." rows="4"><?php
           if (isset($_SESSION['description'])) {
             if($_SESSION['description'] != ''){ 
               echo $_SESSION['description'];
@@ -32,7 +32,18 @@
           <div class="d-inline-block my-auto ml-2">
             <!-- <h5 class="d-inline">Tags:</h5> -->
             <i class="fas fa-2x fa-hashtag d-inline"></i>
-            <p class="d-inline" id="tagList"></p>
+            <div class="d-inline" id="tagList">
+                <?php 
+                if (isset($_SESSION['tag'])) {
+                  foreach ($_SESSION['tag'] as $key => $value) {
+                    $sql = "SELECT tag FROM tag WHERE id = $value";
+                    $result= $db->query($sql);
+                    $row = $result->fetch_assoc();
+                    echo "<input type='checkbox' name='tag[]' value='$value' hidden checked><span class='text-link bg-dark px-1 rounded font-weight-normal tag ml-1 d-inline-block' data-toggle='tooltip' data-placement='top' title='Click to remove' onclick='removeTag(\"{$row['tag']}\",$value)' data-id='$value' data-tag='{$row['tag']}'>#{$row['tag']}</span>";
+                  }
+                }
+                ?>
+            </div>
           </div>
         </div>
 
@@ -66,14 +77,24 @@
 
 
 <script>  
-  var tagArray = [];
+  var tagArray = {};
+  var tempTag = {};
 
+  // store tags in objects
+  $("#tagList > span").each(function(i, obj){
+    var tagId = $(this).attr("data-id")
+    var tag = $(this).attr("data-tag")
+    tempTag[tagId] = tag
+    tagArray[tagId] = tag
+  })
+
+  // remove tag
   function removeTag(tag,tagId) {
-    $('span#'+tag).remove()
-    $('input#'+tagId).remove()
+    $('span[data-tag='+tag+']').remove()
+    $('input[value='+tagId+']').remove()
     $(".tooltip").remove()
-    var index = tagArray.indexOf(tag);    
-    tagArray.splice(index, 1);    
+
+    delete tagArray[tagId]
   }
 
   // Tooltips
@@ -83,21 +104,24 @@
     })
   });
 
+
   // check if tag is already selected
   $("#selectTag").on('change', function () {
     var tag = $(this).find(":selected").text();  
     var tagId = $(this).find(":selected").attr("data-tagId");
-    var flag = true;
-    for (let i = 0; i < tagArray.length; i++) {
-      const element = tagArray[i];
-      if (element == tag) {
-        flag = false
+    var flag = false;
+
+    $.each(tagArray, function(key, value) {
+      if (key == tagId) {
+        flag = true
       }
+    })
+
+    if (!flag) {
+      tagArray[tagId] = tag;
+      console.log("sestieeeeeee")
+      $("#tagList").append(`<input type='checkbox' name='tag[]' value='${tagId}' hidden checked><span class='text-link bg-dark px-1 rounded font-weight-normal tag ml-1 d-inline-block' data-toggle='tooltip' data-placement='top' title='Click to remove' onclick='removeTag("${tag}",${tagId})'  data-id='${tagId}' data-tag='${tag}'>#${tag}</span>`);
     }
-    if (flag == true) {
-      tagArray.push(tag)
-      $("#tagList").append(`<input type='checkbox' name='tag[]' value='${tagId}' id='${tagId}' hidden checked><span class='text-link bg-dark px-1 rounded font-weight-normal tag mr-1' data-toggle='tooltip' data-placement='top' title='Click to remove' onclick='removeTag("${tag}",${tagId})' id='${tag}'>#${tag}</span>`);
-    }   
     $(this).prop('selectedIndex',0);
   });
   
@@ -111,7 +135,8 @@
         $("#imgBox").after(`<img class='d-block mx-auto img-fluid' style='width:500px; max-height:100%;' src='${e.target.result}' alt='User Image' id='postImgTemp'>`); 
         var contest = $("#imgBox").attr("data-contest");
         if (contest != 1) {
-        $("#imgLabel").after('<div class="custom-control custom-checkbox my-auto"><input type="checkbox" class="custom-control-input text-link" id="customControlAutosizing" name="contest"><label class="custom-control-label" for="customControlAutosizing">Join Contest <i>(you can only join once a week)</i></label></div>');
+        $("#joinContest").remove();
+        $("#imgLabel").after('<div class="custom-control custom-checkbox my-auto" id="joinContest"><input type="checkbox" class="custom-control-input text-link" id="customControlAutosizing" name="contest"><label class="custom-control-label" for="customControlAutosizing">Join Contest <i>(you can only join once a week)</i></label></div>');
         }
       }
       reader.readAsDataURL(input.files[0]);
@@ -152,6 +177,7 @@
           type: 'post',
           data: formData,
           success: function(response){
+            console.log(response)
             if (response == "success") {
               $(location).attr('href', 'post.php')
             }
@@ -193,4 +219,7 @@
     }
   });
 </script>
-<?php unset($_SESSION['description']); ?>
+<?php 
+unset($_SESSION['description']); 
+unset($_SESSION['tag']);
+?>

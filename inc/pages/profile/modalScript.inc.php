@@ -134,6 +134,7 @@ function edit($db) {
     </select>
   </div> -->
   <!-- Allow Change Password -->
+  <div id="passAlert"></div>
   <div class="form-group">
     <div class="custom-control custom-checkbox mr-sm-2">
       <input type="checkbox" class="custom-control-input text-link" id="customControlAutosizing" name="changePass">
@@ -161,7 +162,7 @@ function edit($db) {
   <!-- Submit Button -->
   <div class="d-flex flex-row-reverse">
     <button type="reset" class="btn btn-outline-dark  text-link-normal" onclick="resetForm()">Reset</button>
-    <button type="submit" class="btn bg-dark text-link w-auto px-5 float-right mr-3" id="submit">Submit</button>
+    <button type="submit" class="btn bg-dark text-link w-auto px-5 float-right mr-3">Submit</button>
   </div>
 </form>    
 <?php
@@ -246,25 +247,28 @@ function edit($db) {
           // console.log(response)
           // on success redirect user to index.php
           var results = response.split(" ");
-          results.forEach(function(item, array) {
-            // console.log(results);
-             
-            if (item == 'error1') { 
-              $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Your file is too big!</div>");  
-            } else if (item == 'error2') { 
-              $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >There was an error uploading your file!</div>");  
-            } else if (item == 'error3') { 
-              $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Invalid file type! Only jpg, jpeg, and png files are allowed!</div>");  
-            } else if (item == 'password') { 
-              $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Passwords don't match!</div>");  
-            } else if (item == 'wrongPass') { 
-              $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Old Password is wrong!</div>");  
-            } else if (item == 'email') { 
-              $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Email already in use!</div>");                
-            } else if (item == "success" || item == "info") {
-              $(location).attr('href', 'profile.php')
-            }
-          });
+          console.log(results.length)
+
+          if (results.length > 2) {
+            results.forEach(function(item, array) {
+              console.log(results);
+              if (item == 'error1') { 
+                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Your file is too big!</div>");  
+              } else if (item == 'error2') { 
+                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >There was an error uploading your file!</div>");  
+              } else if (item == 'error3') { 
+                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Invalid file type! Only jpg, jpeg, and png files are allowed!</div>");  
+              } else if (item == 'password') { 
+                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Passwords don't match!</div>");  
+              } else if (item == 'wrongPass') { 
+                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Old Password is wrong!</div>");  
+              } else if (item == 'email') { 
+                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Email already in use!</div>");                
+              }
+            });
+          } else {
+            $(location).attr('href', 'profile.php?update')
+          }
           // if there are any errors coming from the script the following alerts will be displayed
         },
         contentType: false,

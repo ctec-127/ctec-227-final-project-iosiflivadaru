@@ -7,9 +7,16 @@
   }
   $result = $db->query($sql);
   $row = $result->fetch_assoc();
+  $currentPage = basename($_SERVER['REQUEST_URI'], '?' . $_SERVER['QUERY_STRING']);
+  $_SESSION['currentEditPage'] = $currentPage;
 ?>
 
-<div class="container my-5 pt-3">
+<div class="container my-5 pt-3" data-currentUser="<?= $_SESSION['firstName'].' '.$_SESSION['lastName'] ?>" data-userId="<?=$_SESSION['id']?>" data-profileImg="<?=$_SESSION['profileImg']?>">
+  <?php 
+    if (isset($_GET['update'])) {
+      echo "<div class='alert alert-success mt-3 w-auto text-center alertNewImage updateAlert' role='alert' >Account successfully updated!<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>";
+    }
+  ?>
   <div class="row pt-3"><!-- First Row Start -->
 
     <div class="col-md-6"><!-- col-md-6 Start -->
@@ -35,15 +42,15 @@
               }
               if ($followers == 1) {
                 if (isset($_GET['userId'])) {
-                  echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='followers' data-user='{$_GET['userId']}' data-toggle='modal' data-target='#modal'>$followers&nbsp;Follower</p> ";
+                  echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='followers' data-user='{$_GET['userId']}' data-toggle='modal' data-target='#exampleModalLong'>$followers&nbsp;Follower</p> ";
                 } else {
-                  echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='followers' data-user='{$_SESSION['id']}' data-toggle='modal' data-target='#modal'>$followers&nbsp;Follower</p> ";
+                  echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='followers' data-user='{$_SESSION['id']}' data-toggle='modal' data-target='#exampleModalLong'>$followers&nbsp;Follower</p> ";
                 }
               } else {
                 if (isset($_GET['userId'])) {
-                echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='followers' data-user='{$_GET['userId']}' data-toggle='modal' data-target='#modal'>$followers&nbsp;Followers</p> ";
+                echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='followers' data-user='{$_GET['userId']}' data-toggle='modal' data-target='#exampleModalLong'>$followers&nbsp;Followers</p> ";
                 } else {
-                  echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='followers' data-user='{$_SESSION['id']}' data-toggle='modal' data-target='#modal'>$followers&nbsp;Followers</p> ";
+                  echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='followers' data-user='{$_SESSION['id']}' data-toggle='modal' data-target='#exampleModalLong'>$followers&nbsp;Followers</p> ";
                 }
               }
             } else {
@@ -59,9 +66,9 @@
                 $following += 1;
               }
               if (isset($_GET['userId'])) {
-                echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='following' data-user='{$_GET['userId']}' data-toggle='modal' data-target='#modal'>$following&nbsp;Following</p>";
+                echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='following' data-user='{$_GET['userId']}' data-toggle='modal' data-target='#exampleModalLong'>$following&nbsp;Following</p>";
               } else {
-                echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='following' data-user='{$_SESSION['id']}' data-toggle='modal' data-target='#modal'>$following&nbsp;Following</p>";
+                echo "<p class='text-white d-inline bg-dark rounded py-1 px-2 cursor-pointer' id='following' data-user='{$_SESSION['id']}' data-toggle='modal' data-target='#exampleModalLong'>$following&nbsp;Following</p>";
               }
             } else {
               echo "<p class='text-white d-inline bg-dark rounded py-1 px-2'>0 Following</p>";
@@ -101,12 +108,12 @@
             if (isset($_GET['userId'])) {
               if ($_GET['userId'] == $_SESSION['id']) {
                 echo "<div class='ml-auto justify-content-end'>";
-                  echo "<i class='fas fa-lg fa-edit cursor-pointer text-dark' id='edit' data-toggle='modal' data-target='#modal'></i>";
+                  echo "<i class='fas fa-lg fa-edit cursor-pointer text-dark' id='edit' data-toggle='modal' data-target='#exampleModalLong'></i>";
                 echo "</div>";
               }
             } else {
               echo "<div class='ml-auto justify-content-end'>";
-                echo "<i class='fas fa-lg fa-edit cursor-pointer text-dark' id='edit' data-toggle='modal' data-target='#modal'></i>";
+                echo "<i class='fas fa-lg fa-edit cursor-pointer text-dark' id='edit' data-toggle='modal' data-target='#exampleModalLong'></i>";
               echo "</div>";
             }
           ?>
@@ -135,10 +142,20 @@
               }
             ?>            
           </p> -->
+          <?php 
+            if (isset($_GET['userId'])) {
+              if ($_GET['userId'] == $_SESSION['id']) {
+                echo "<div class='mt-2'>";
+                  echo "<img src='icons/contestToken.png' class='token' alt=''><strong class='badge badge-warning'>{$row['contest_tokens']}</strong>";
+                echo "</div>";
+              }
+            } else {
+              echo "<div class='mt-2'>";
+                echo "<img src='icons/contestToken.png' class='token' alt=''><strong class='badge badge-warning'>{$row['contest_tokens']}</strong>";
+              echo "</div>";
+            }
+          ?>
 
-          <div class="mt-2">
-            <img src="icons/contestToken.png" class="token" alt=""><strong class="badge badge-warning"><?=$row['contest_tokens']?></strong>
-          </div>
 
           <!-- Badges -->
           <div class="mt-2">
@@ -178,9 +195,9 @@
       <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
         <?php 
           if (isset($_GET['userId'])) {
-            posts($db, $_GET['userId'], 1);
+            posts($db, $_GET['userId'], 1, 0);
           } else {
-            posts($db, $_SESSION['id'], 1);
+            posts($db, $_SESSION['id'], 1, 0);
           }        
         ?>
       </div>
@@ -189,9 +206,9 @@
       <div class="tab-pane fade" id="contest" role="tabpanel" aria-labelledby="contest-tab">
         <?php 
           if (isset($_GET['userId'])) {
-            posts($db, $_GET['userId'], 2);
+            posts($db, $_GET['userId'], 2, 1);
           } else {
-            posts($db, $_SESSION['id'], 2);
+            posts($db, $_SESSION['id'], 2, 1);
           }        
         ?>
       </div>
@@ -200,24 +217,6 @@
     </div>
   </div><!-- Second Row End -->
 </div><!-- Container End -->
-
-<!-- Modal -->
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="editLogLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editLogLabel"></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- This is where modal data output will go  -->
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End Modal -->
 
 <?=editModal()?>
 <script src="js/functions.js"></script>
@@ -274,4 +273,10 @@
       }
     });
   });
+
+  window.setTimeout(function() {
+    $(".updateAlert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+  }, 4000);
 </script>

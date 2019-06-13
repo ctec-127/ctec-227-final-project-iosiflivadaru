@@ -4,10 +4,11 @@ function profile(userId) {
 }
 
 // Like
-function like(postId) {
+function like(postId, a) {
   var postId = postId
+  var a = a;
   var like = "like"
-  var likesNr = $("#like"+postId).next().html()
+  var likesNr = $("#like"+postId+a).next().html()
 
   // AJAX request
   $.ajax({
@@ -19,29 +20,30 @@ function like(postId) {
       },
     success: function(response){
       var newNr = parseInt(likesNr) + 1
-      $("#like"+postId).next().html(newNr)
+      $("#like"+postId+a).next().html(newNr)
 
       var profileImg = $(".container").attr("data-profileImg")
       var userId = $(".container").attr("data-userId")
 
       var userName = $(".container").attr("data-currentUser")
 
-      var oldTooltip = $("#like"+postId).next().attr('data-original-title')
+      var oldTooltip = $("#like"+postId+a).next().attr('data-original-title')
       var currentUser = $(".container").attr("data-currentUser") + "<br>"
       var res = currentUser + oldTooltip
 
-      $("#like"+postId).next().attr('data-original-title', `${res}`)
-      $("#like"+postId).after(`<i class='fas fa-thumbs-up' id='dislike${postId}' onclick='dislike(${postId})'></i>`)
-      $("#like"+postId).remove()
-      $("#displayLikes"+postId).append(`<div class='d-flex justify-content-start align-items-center mt-3' data-userLike='${userName}'><img class='rounded-circle float-left profile d-inline-block cursor-pointer' onclick='profile(${userId})' src='img/${profileImg}' style='width:35px; height:35px;' alt='User Image'><h6 class='d-inline m-0 ml-2 cursor-pointer' onclick='profile(${userId})'>${userName}</h6></div>`)
+      $("#like"+postId+a).next().attr('data-original-title', `${res}`)
+      $("#like"+postId+a).after(`<i class='fas fa-thumbs-up' id='dislike${postId+a}' onclick='dislike(${postId},\"${a}\")'></i>`)
+      $("#like"+postId+a).remove()
+      $("#displayLikes"+postId+a).append(`<div class='d-flex justify-content-start align-items-center mt-3' data-userLike='${userName}'><img class='rounded-circle float-left profile d-inline-block cursor-pointer' onclick='profile(${userId})' src='img/${profileImg}' style='width:35px; height:35px;' alt='User Image'><h6 class='d-inline m-0 ml-2 cursor-pointer' onclick='profile(${userId})'>${userName}</h6></div>`)
     }
   });
 }
 // Dislike
-function dislike(postId) {
+function dislike(postId, a) {
   var postId = postId
+  var a = a
   var dislike = "dislike"
-  var likesNr = $("#dislike"+postId).next().html()
+  var likesNr = $("#dislike"+postId+a).next().html()
 
   // AJAX request
   $.ajax({
@@ -53,26 +55,27 @@ function dislike(postId) {
       },
     success: function(response){
       var newNr = parseInt(likesNr) - 1
-      $("#dislike"+postId).next().html(newNr)
+      $("#dislike"+postId+a).next().html(newNr)
 
       var userName = $(".container").attr("data-currentUser")
-      var oldTooltip = $("#dislike"+postId).next().attr('data-original-title')
+      var oldTooltip = $("#dislike"+postId+a).next().attr('data-original-title')
       var currentUser = userName + "<br>"
       var res = oldTooltip.replace(currentUser, '')
       
-      $("#dislike"+postId).next().attr('data-original-title', `${res}`)
-      $("#dislike"+postId).after(`<i class='far fa-thumbs-up' id='like${postId}' onclick='like(${postId})'></i>`)
-      $("#dislike"+postId).remove()
+      $("#dislike"+postId+a).next().attr('data-original-title', `${res}`)
+      $("#dislike"+postId+a).after(`<i class='far fa-thumbs-up' id='like${postId+a}' onclick='like(${postId},\"${a}\")'></i>`)
+      $("#dislike"+postId+a).remove()
       $(`div[data-userLike="${userName}"]`).remove()
     }
   });
 }
 
 // Upvote
-function upvote(postId) {
+function upvote(postId,a) {
   var postId = postId
+  var a = a
   var upvote = "upvote"
-  var upvotesNr = $("#upvote"+postId).next().html()
+  var upvotesNr = $("#upvote"+postId+a).next().html()
 
   // AJAX request
   $.ajax({
@@ -84,28 +87,29 @@ function upvote(postId) {
       },
     success: function(response){
       var newNr = parseInt(upvotesNr) + 1
-      $("#upvote"+postId).next().html(newNr)
+      $("#upvote"+postId+a).next().html(newNr)
 
       var profileImg = $(".container").attr("data-profileImg")
       var userId = $(".container").attr("data-userId")
 
-      var oldTooltip = $("#upvote"+postId).next().attr('data-original-title')
+      var oldTooltip = $("#upvote"+postId+a).next().attr('data-original-title')
       var userName = $(".container").attr("data-currentUser")
       var currentUser = userName + "<br>"
       var res = currentUser + oldTooltip
 
-      $("#upvote"+postId).next().attr('data-original-title', `${res}`)
-      $("#upvote"+postId).after(`<i class='fas fa-star' id='downvote${postId}' onclick='downvote(${postId})'></i>`)
-      $("#upvote"+postId).remove()
-      $("#displayContest"+postId).append(`<div class='d-flex justify-content-start align-items-center mt-3' data-userContest='${userName}'><img class='rounded-circle float-left profile d-inline-block cursor-pointer' onclick='profile(${userId})' src='img/${profileImg}' style='width:35px; height:35px;' alt='User Image'><h6 class='d-inline m-0 ml-2 cursor-pointer' onclick='profile(${userId})'>${userName}</h6></div>`)
+      $("#upvote"+postId+a).next().attr('data-original-title', `${res}`)
+      $("#upvote"+postId+a).after(`<i class='fas fa-star' id='downvote${postId+a}' onclick='downvote(${postId},\"${a}\")'></i>`)
+      $("#upvote"+postId+a).remove()
+      $("#displayContest"+postId+a).append(`<div class='d-flex justify-content-start align-items-center mt-3' data-userContest='${userName}'><img class='rounded-circle float-left profile d-inline-block cursor-pointer' onclick='profile(${userId})' src='img/${profileImg}' style='width:35px; height:35px;' alt='User Image'><h6 class='d-inline m-0 ml-2 cursor-pointer' onclick='profile(${userId})'>${userName}</h6></div>`)
     }
   });
 }
 // Downvote
-function downvote(postId) {
+function downvote(postId,a) {
   var postId = postId
+  var a = a
   var downvote = "downvote"
-  var downvoteNr = $("#downvote"+postId).next().html()
+  var downvoteNr = $("#downvote"+postId+a).next().html()
 
   // AJAX request
   $.ajax({
@@ -117,16 +121,16 @@ function downvote(postId) {
       },
     success: function(response){
       var newNr = parseInt(downvoteNr) - 1
-      $("#downvote"+postId).next().html(newNr)
+      $("#downvote"+postId+a).next().html(newNr)
 
-      var oldTooltip = $("#downvote"+postId).next().attr('data-original-title')
+      var oldTooltip = $("#downvote"+postId+a).next().attr('data-original-title')
       var userName = $(".container").attr("data-currentUser")
       var currentUser = userName + "<br>"
       var res = oldTooltip.replace(currentUser, '')
       
-      $("#downvote"+postId).next().attr('data-original-title', `${res}`)
-      $("#downvote"+postId).after(`<i class='far fa-star' id='upvote${postId}' onclick='upvote(${postId})'></i>`)
-      $("#downvote"+postId).remove()
+      $("#downvote"+postId+a).next().attr('data-original-title', `${res}`)
+      $("#downvote"+postId+a).after(`<i class='far fa-star' id='upvote${postId+a}' onclick='upvote(${postId},\"${a}\")'></i>`)
+      $("#downvote"+postId+a).remove()
       $(`div[data-userContest="${userName}"]`).remove()
     }
   });
