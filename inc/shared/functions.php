@@ -420,6 +420,9 @@ function sidePost($db) { ?>
           $sql = 'UPDATE user SET contest_date = ADDDATE("'.$contestDate.'", INTERVAL 7 DAY) WHERE id = 1';
           $result = $db->query($sql);
 
+          $sql = 'UPDATE post SET active = 0 WHERE active = 1';
+          $result = $db->query($sql);
+
           $sql = "SELECT contest_date FROM user WHERE id = 1";
           $result = $db->query($sql);
           $row = $result->fetch_assoc();
