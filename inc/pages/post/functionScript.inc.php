@@ -59,7 +59,7 @@
     
     if (in_array($fileActualExt, $allowed)) { // make sure it's a valid file extension
       if ($fileError === 0) { // make sure there are no errors
-        if ($fileSize < 10000000) { // make sure the file size isn't too big
+        if ($fileSize < 2000000) { // make sure the file size isn't too big
   
           // add post to database
           $description   = $_POST['description'];

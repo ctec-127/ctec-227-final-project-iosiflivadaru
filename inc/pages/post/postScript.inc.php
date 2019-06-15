@@ -136,7 +136,7 @@
         var contest = $("#imgBox").attr("data-contest");
         if (contest != 1) {
         $("#joinContest").remove();
-        $("#imgLabel").after('<div class="custom-control custom-checkbox my-auto" id="joinContest"><input type="checkbox" class="custom-control-input text-link" id="customControlAutosizing" name="contest"><label class="custom-control-label" for="customControlAutosizing">Join Contest <i>(you can only join once a week)</i></label></div>');
+        $("#imgLabel").after('<div class="custom-control custom-checkbox my-2" id="joinContest"><input type="checkbox" class="custom-control-input text-link" id="customControlAutosizing" name="contest"><label class="custom-control-label" for="customControlAutosizing">Join Contest <i>(you can only join once a week)</i></label></div>');
         }
       }
       reader.readAsDataURL(input.files[0]);
@@ -211,6 +211,27 @@
           console.log(response)
           if (response == "post") {
             $(location).attr('href', 'home.php')
+          }
+          // if there are any errors coming from the script the following alerts will be displayed
+          if (response == 'error1') {
+            $("#alertNewImage").remove();     
+            $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center' role='alert' id='alertNewImage'>Your file is too big! Your Image should be less than 2MB!</div>");  
+          }
+          if (response == 'error2') {
+            $("#alertNewImage").remove();     
+            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>There was an error uploading your file!</div>");  
+          }
+          if (response == 'error3') {
+            $("#alertNewImage").remove();     
+            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Invalid file type! Only jpg, jpeg, and png files are allowed!</div>");  
+          }
+          if (response == 'password') {
+            $("#alertNewImage").remove();     
+            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Passwords don't match!</div>");  
+          }
+          if (response == 'email') {
+            $("#alertNewImage").remove();     
+            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Email already in use!</div>");  
           }
         },
         contentType: false,

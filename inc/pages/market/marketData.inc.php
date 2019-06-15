@@ -109,7 +109,7 @@
     </div>
   </div>
 </div>
-
+<?php contestInfo() ?>
 <script>
 $("button").on('click', function(){
 

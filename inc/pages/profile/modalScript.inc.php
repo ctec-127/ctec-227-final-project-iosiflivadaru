@@ -253,17 +253,17 @@ function edit($db) {
             results.forEach(function(item, array) {
               console.log(results);
               if (item == 'error1') { 
-                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Your file is too big!</div>");  
+                $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center alertNewImage' role='alert' >Your file is too big! Your Image should be less than 2MB!</div>");  
               } else if (item == 'error2') { 
-                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >There was an error uploading your file!</div>");  
+                $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center alertNewImage' role='alert' >There was an error uploading your file!</div>");  
               } else if (item == 'error3') { 
-                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Invalid file type! Only jpg, jpeg, and png files are allowed!</div>");  
+                $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center alertNewImage' role='alert' >Invalid file type! Only jpg, jpeg, and png files are allowed!</div>");  
               } else if (item == 'password') { 
-                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Passwords don't match!</div>");  
+                $("#passAlert").after("<div class='alert alert-danger mb-3 w-auto text-center alertNewImage' role='alert' >Passwords don't match!</div>");  
               } else if (item == 'wrongPass') { 
-                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Old Password is wrong!</div>");  
+                $("#passAlert").after("<div class='alert alert-danger mb-3 w-auto text-center alertNewImage' role='alert' >Old Password is wrong!</div>");  
               } else if (item == 'email') { 
-                $("#passAlert").after("<div class='alert alert-danger mb-4 w-auto text-center alertNewImage' role='alert' >Email already in use!</div>");                
+                $("#passAlert").after("<div class='alert alert-danger mb-3 w-auto text-center alertNewImage' role='alert' >Email already in use!</div>");                
               }
             });
           } else {

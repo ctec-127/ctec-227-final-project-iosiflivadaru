@@ -121,7 +121,7 @@ if ($_SESSION['loggedIn'] == 0) {
           // if there are any errors coming from the script the following alerts will be displayed
           if (response == 'error1') {
             $("#alertNewImage").remove();     
-            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Your file is too big!</div>");  
+            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Your file is too big! Your Image should be less than 2MB!</div>");  
           }
           if (response == 'error2') {
             $("#alertNewImage").remove();     

@@ -99,7 +99,7 @@ if (isset($_FILES['profileImg']) || $_FILES['profileImg']['name'] == 0) {
     $allowed       =  array('jpg', 'jpeg', 'png'); // list of allowed file extesnstions
     if (in_array($fileActualExt, $allowed)) { // make sure it's a valid file extension
       if ($fileError === 0) { // make sure there are no errors
-        if ($fileSize < 10000000) { // make sure the file size isn't too big
+        if ($fileSize < 2000000) { // make sure the file size isn't too big
           // update profileImg name
           $sql = "SELECT first_name, last_name FROM user WHERE `id` = {$_SESSION['id']} LIMIT 1";
           $result = $db->query($sql);

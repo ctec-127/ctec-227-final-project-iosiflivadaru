@@ -1,9 +1,9 @@
-<div class="container my-5 pt-3">
+<div class="container my-5 pt-3" data-currentUser="<?= $_SESSION['firstName'].' '.$_SESSION['lastName'] ?>" data-userId="<?=$_SESSION['id']?>" data-profileImg="<?=$_SESSION['profileImg']?>">
   <div class="row pt-3"><!-- First Row Start -->
     <div class="col-md-8"><!-- col-md-8 Start -->
       <div class="d-flex align-items-start justify-content-center justify-content-md-start after">
         <!-- Search -->
-        <div class="form-group w-50">
+        <div class="form-group w-50 w-md-100">
           <input type="text" class="form-control" id="search" name="search" placeholder="Search User or Tag (use '#' before a tag)">
         </div>
         <!-- Submit Button -->
@@ -19,6 +19,7 @@
   </div><!-- First Row End -->
 </div><!-- Container End -->
 <?php contestInfo() ?>
+<script src="js/functions.js"></script>
 <script>
   function profile(userId) {
     console.log(userId);
