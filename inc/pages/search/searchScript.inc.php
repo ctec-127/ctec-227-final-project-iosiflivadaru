@@ -22,7 +22,7 @@
 <script src="js/functions.js"></script>
 <script>
   function profile(userId) {
-    console.log(userId);
+    // console.log(userId);
     $(location).attr('href', `profile.php?userId=${userId}`);
   }
 
@@ -31,7 +31,7 @@
         $("#submit").click();
     }
   });
-  console.log("hello")
+  // console.log("hello")
   $('#submit').click(function(e){
     var search = $("#search").val()
     if (search != '' && search.replace(/\s/g, '').length) {
@@ -41,7 +41,7 @@
         type: 'post',
         data: {search: search},
         success: function(response){
-          console.log(response)
+          // console.log(response)
           if (response == "noTag") {
             $("#noResult").remove();
             $(".searchUsers").remove();

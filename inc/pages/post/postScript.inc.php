@@ -119,7 +119,7 @@
 
     if (!flag) {
       tagArray[tagId] = tag;
-      console.log("sestieeeeeee")
+      // console.log("sestieeeeeee")
       $("#tagList").append(`<input type='checkbox' name='tag[]' value='${tagId}' hidden checked><span class='text-link bg-dark px-1 rounded font-weight-normal tag ml-1 d-inline-block' data-toggle='tooltip' data-placement='top' title='Click to remove' onclick='removeTag("${tag}",${tagId})'  data-id='${tagId}' data-tag='${tag}'>#${tag}</span>`);
     }
     $(this).prop('selectedIndex',0);
@@ -146,6 +146,11 @@
   // When the file input is being changed execute tempImg function
   $("#postImg").change(function() {
     tempImg(this);
+    if ($("#postImg").val() == '') {
+      // console.log("nothing");
+      $("#joinContest").remove();
+      $("#postImgTemp").remove();
+    }
   });
 
   // Add new tag
@@ -177,7 +182,7 @@
           type: 'post',
           data: formData,
           success: function(response){
-            console.log(response)
+            // console.log(response)
             if (response == "success") {
               $(location).attr('href', 'post.php')
             }
@@ -200,7 +205,7 @@
     var img = $("#postImg").val()
     // console.log("DESC:"+desc+" and IMG:"+img)
     if (desc != '' || img != '') {
-      console.log("hi")
+      // console.log("hi")
       var formData = new FormData($('form')[0]);
       // AJAX request
       $.ajax({
@@ -208,7 +213,7 @@
         type: 'post',
         data: formData,
         success: function(response){
-          console.log(response)
+          // console.log(response)
           if (response == "post") {
             $(location).attr('href', 'home.php')
           }

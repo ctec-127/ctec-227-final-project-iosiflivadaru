@@ -247,11 +247,11 @@ function edit($db) {
           // console.log(response)
           // on success redirect user to index.php
           var results = response.split(" ");
-          console.log(results.length)
+          // console.log(results.length)
 
           if (results.length > 2) {
             results.forEach(function(item, array) {
-              console.log(results);
+              // console.log(results);
               if (item == 'error1') { 
                 $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center alertNewImage' role='alert' >Your file is too big! Your Image should be less than 2MB!</div>");  
               } else if (item == 'error2') { 

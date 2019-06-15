@@ -113,7 +113,7 @@ if ($_SESSION['loggedIn'] == 0) {
         url: "inc/pages/register/registerScript.inc.php",
         data: formData,
         success: function (response) {
-          console.log(response)
+          // console.log(response)
           // on success redirect user to index.php
           if (response == "success") {
             $(location).attr('href', 'index.php')

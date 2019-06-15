@@ -1,5 +1,5 @@
 function profile(userId) {
-  console.log(userId);
+  // console.log(userId);
   $(location).attr('href', `profile.php?userId=${userId}`);
 }
 
@@ -178,7 +178,7 @@ $('.submit').click(function(){
 // Edit Modal
 $('.editPost').click(function(){
   var postId = $(this).attr('data-postId');
-  console.log('hi')
+  // console.log('hi')
   // AJAX request
   $.ajax({
     url: 'inc/pages/home/editModalScript.inc.php',

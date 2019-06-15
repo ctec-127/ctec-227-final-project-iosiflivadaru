@@ -125,7 +125,7 @@ $("button").on('click', function(){
         itemTag: itemTag
       },
       success: function (response) {
-        console.log(response)
+        // console.log(response)
         if (response == 1) {
           $(location).attr('href', 'market.php')
         } else {
