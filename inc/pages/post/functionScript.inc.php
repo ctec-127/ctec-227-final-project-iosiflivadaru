@@ -55,11 +55,11 @@
     $fileExt       =  explode('.', $fileName);     // get last bit of $fileName aka. the extension
     $fileActualExt =  strtolower(end($fileExt));   // get the end of the file name (ext) and make it all lowercase
   
-    $allowed       =  array('jpg', 'jpeg', 'png'); // list of allowed file extesnstions
+    $allowed       =  array('jpg', 'jpeg'); // list of allowed file extesnstions
     
     if (in_array($fileActualExt, $allowed)) { // make sure it's a valid file extension
       if ($fileError === 0) { // make sure there are no errors
-        if ($fileSize < 2000000) { // make sure the file size isn't too big
+        if ($fileSize < 25000000) { // make sure the file size isn't too big
   
           // add post to database
           $description   = $_POST['description'];
@@ -102,15 +102,139 @@
               $result = $db->query($sql);
             }
           }
+// ***************************************************
 
+          $file = $_FILES['postImg']['tmp_name']; 
+          $sourceProperties = getimagesize($file);
+          $fileNewName = $postId.".".$fileActualExt;
+          $folderPath = "../../../img/posts/";
+          $ext = pathinfo($_FILES['postImg']['name'], PATHINFO_EXTENSION);
+          $imageType = $sourceProperties[2];
+
+
+          switch ($imageType) {
+
+
+              case IMAGETYPE_PNG:
+                  $imageResourceId = imagecreatefrompng($file); 
+                  $targetLayer = imageResize($imageResourceId,$sourceProperties[0],$sourceProperties[1]);
+                  imagepng($targetLayer,$folderPath. "post_". $fileNewName);
+                  break;
+
+
+              case IMAGETYPE_GIF:
+                  $imageResourceId = imagecreatefromgif($file); 
+                  $targetLayer = imageResize($imageResourceId,$sourceProperties[0],$sourceProperties[1]);
+                  imagegif($targetLayer,$folderPath. "post_". $fileNewName);
+                  break;
+
+
+              case IMAGETYPE_JPEG:
+                  $imageResourceId = imagecreatefromjpeg($file); 
+                  $targetLayer = imageResize($imageResourceId,$sourceProperties[0],$sourceProperties[1]);
+                  imagejpeg($targetLayer,$folderPath. "post_". $fileNewName);
+
+
+                  break;
+
+
+              default:
+                  echo "Invalid Image type.";
+                  exit;
+                  break;
+          }
+
+
+          move_uploaded_file($file, $folderPath. $fileNewName);
+          // echo "Image Resize Successfully.";
+
+          $image = imagecreatefromstring(file_get_contents($folderPath. $fileNewName));
+          $exif = @exif_read_data($folderPath. $fileNewName);
+          if(!empty($exif['Orientation'])) {
+              // echo $exif['Orientation'];
+              switch($exif['Orientation']) {
+                  case 8:
+                                          
+                      list($width, $height) = getimagesize($folderPath. $fileNewName);
+                      if ($width > 1920) {
+                          $newwidth = $width / 4;
+                          $newheight = $height / 4;
+                      } else {
+                          $newwidth = $width;
+                          $newheight = $height;
+                      }
+
+                      // Load
+                      $thumb = imagecreatetruecolor($newwidth, $newheight);
+                      $source = imagecreatefromjpeg($folderPath. $fileNewName);
+
+                      // Resize
+                      imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+                      $image = imagerotate($thumb,90,0);
+
+                      // Save
+                      imagejpeg($image, $folderPath. "post_". $fileNewName);
+                      break;
+                  case 3:
+                                          
+                      list($width, $height) = getimagesize($folderPath. $fileNewName);
+                      if ($width > 1920) {
+                          $newwidth = $width / 4;
+                          $newheight = $height / 4;
+                      } else {
+                          $newwidth = $width;
+                          $newheight = $height;
+                      }
+
+                      // Load
+                      $thumb = imagecreatetruecolor($newwidth, $newheight);
+                      $source = imagecreatefromjpeg($folderPath. $fileNewName);
+
+                      // Resize
+                      imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+                      $image = imagerotate($thumb,180,0);
+
+                      // Save
+                      imagejpeg($image, $folderPath. "post_". $fileNewName);
+                      break;
+                  case 6:
+                      
+                      list($width, $height) = getimagesize($folderPath. $fileNewName);
+                      if ($width > 1920) {
+                          $newwidth = $width / 4;
+                          $newheight = $height / 4;
+                      } else {
+                          $newwidth = $width;
+                          $newheight = $height;
+                      }
+
+                      // Load
+                      $thumb = imagecreatetruecolor($newwidth, $newheight);
+                      $source = imagecreatefromjpeg($folderPath. $fileNewName);
+
+                      // Resize
+                      imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+                      $image = imagerotate($thumb,-90,0);
+
+                      // Save
+                      imagejpeg($image, $folderPath. "post_". $fileNewName);
+                      break;
+              }
+          }
+
+          unlink($folderPath. $fileNewName);
+
+
+          // OLD CODE
           // upload post image
-          $fileNameNew     = "post_".$postId.".".$fileActualExt; // append on current time so we don't get duplicates
-          $fileDestination = '../../../img/posts/'.$fileNameNew; // set a destination
-          move_uploaded_file($fileTmpName, $fileDestination); // move file from temp location to perminent location
-        
+          // $fileNameNew     = "post_".$postId.".".$fileActualExt; // append on current time so we don't get duplicates
+          // $fileDestination = '../../../img/posts/'.$fileNameNew; // set a destination
+          // move_uploaded_file($fileTmpName, $fileDestination); // move file from temp location to perminent location
+
+// *****************************************************************
           $sql2 = "
             UPDATE `post`
-            SET `post_img` = '$fileNameNew'
+            SET `post_img` = 'post_$fileNewName'
             WHERE `id` = '$postId'
           ";  
           $result = $db->query($sql2);
@@ -130,4 +254,19 @@
     }
   } //end upload_file function
   
+  function imageResize($imageResourceId,$width,$height) {
+
+    if ($width > 1920) {
+        $targetWidth =$width / 4;
+        $targetHeight =$height / 4;
+    } else {
+        $targetWidth =$width;
+        $targetHeight =$height;
+    }
+
+    $targetLayer=imagecreatetruecolor($targetWidth,$targetHeight);
+    imagecopyresampled($targetLayer,$imageResourceId,0,0,0,0,$targetWidth,$targetHeight, $width,$height);
+
+    return $targetLayer;
+  } 
 ?>

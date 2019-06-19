@@ -113,7 +113,7 @@ function downvote(postId,a) {
 
   // AJAX request
   $.ajax({
-    url: 'inc/pages/home/contestSCript.inc.php',
+    url: 'inc/pages/home/contestScript.inc.php',
     type: 'post',
     data: {
       downvote: downvote,

@@ -297,7 +297,7 @@ function posts($db, $currentUser, $page, $par) {
               echo "<img class='rounded-circle float-left profile d-inline-block cursor-pointer' onclick='profile({$currentUser})' src='img/{$_SESSION['profileImg']}' style='width:35px; height:35px;' alt='User Image'>" . "<h6 class='d-inline m-0 ml-2'>{$_SESSION['firstName']} {$_SESSION['lastName']}</h6>";      
             echo "</div>";
             echo "<div class='d-flex mb-3' id='commentInput$postId$copy'>";
-              echo "<input type='text' class='form-control comment$postId'  name='comment' placeholder='Leave a Comment...'>";
+              echo "<input type='text' class='form-control comment$postId'  name='comment' maxlength='500' placeholder='Leave a Comment...'>";
               echo "<button class='btn bg-dark text-link w-auto px-4 ml-3 submit' data-postId='$postId$copy'>Submit</button>";
             echo "</div>";
                           
@@ -369,10 +369,10 @@ function sidePost($db) { ?>
                 echo "<p class='mb-0'><i class='fas fa-star gold mr-2'></i><strong>{$row['num']}</strong></p>";
               echo "</div>";
             echo "</div>";
-            echo "<hr>";
             $first = false;
             $second = true;
           } else if ($second) {
+            echo "<hr>";
             echo "<div class='d-flex'>";
             echo "<div class='d-inline-block mx-auto mt-3'>";
               echo "<h2 class='mr-2 silver d-inline'>2<sup>nd</sup></h2>";
@@ -396,7 +396,7 @@ function sidePost($db) { ?>
           echo "</div>";
         }
         if (mysqli_num_rows($result) == 0) {
-          echo "<i><p class='m-0 text-center'>Post on the contest to become Rank 1!! :O</p></i>";
+          echo "<p class='m-0 text-center'><i>Post on the contest to become Rank 1!! :O</i></p>";
         }
       ?>
     </div>
@@ -417,25 +417,6 @@ function sidePost($db) { ?>
 
         // execute if statement after the days left end
         if ($countdown < 0) {
-          $sql = 'UPDATE user SET contest_date = ADDDATE("'.$contestDate.'", INTERVAL 7 DAY) WHERE id = 1';
-          $result = $db->query($sql);
-
-          $sql = 'UPDATE post SET active = 0 WHERE active = 1';
-          $result = $db->query($sql);
-
-          $sql = "SELECT contest_date FROM user WHERE id = 1";
-          $result = $db->query($sql);
-          $row = $result->fetch_assoc();
-          $contestDate = $row['contest_date'];
-          //A: RECORDS TODAY'S Date And Time
-          $today = time();
-  
-          //B: RECORDS Date And Time OF YOUR EVENT
-          $event = strtotime($row['contest_date']);
-  
-          //C: COMPUTES THE DAYS UNTIL THE EVENT.
-          $countdown = round(($event - $today)/86400);
-
           // Reward top 3 users with contest tokens
           $sql = "SELECT COUNT(*) AS `num`, user.id FROM contest JOIN post ON post.id = contest.post_id JOIN user on user.id = post.user_id WHERE active = 1 GROUP BY post_id ORDER BY num DESC LIMIT 3";
           $result = $db->query($sql);
@@ -461,7 +442,34 @@ function sidePost($db) { ?>
               $rank3 = false;
             }
           }
+
+          $sql = 'UPDATE user SET contest_date = ADDDATE("'.$contestDate.'", INTERVAL 7 DAY) WHERE id = 1';
+          $result = $db->query($sql);
+
+          $sql = "SELECT contest_date FROM user WHERE id = 1";
+          $result = $db->query($sql);
+          $row = $result->fetch_assoc();
+          $contestDate = $row['contest_date'];
+          //A: RECORDS TODAY'S Date And Time
+          $today = time();
+  
+          //B: RECORDS Date And Time OF YOUR EVENT
+          $event = strtotime($row['contest_date']);
+  
+          //C: COMPUTES THE DAYS UNTIL THE EVENT.
+          $countdown = round(($event - $today)/86400);
+          
+          // Reset users that joined the contest
+          $sql = "UPDATE user SET contest_join = 0 WHERE contest_join = 1";
+          $result = $db->query($sql);
+
+          // Set active contest posts to 0
+          $sql = "UPDATE post SET active = 0 WHERE active = 1";
+          $result = $db->query($sql);
+
+          $_SESSION['contest'] = 0;
         }
+        
 
         //D: DISPLAYS COUNTDOWN UNTIL EVENT
         echo "$countdown days left";
@@ -512,14 +520,25 @@ function sidePost($db) { ?>
           echo "</div>";
         }
         if (mysqli_num_rows($result) == 0) {
-          echo "<i><p class='my-3'>In order to get recommendations you need to follow people! :)</p></i>";
+          echo "<p class='my-3'><i>In order to get recommendations you need to follow people! :)</i></p>";
         }
       } else {
-          echo "<i><p class='my-3'>In order to get recommendations you need to follow people! :)</p></i>";
+          echo "<p class='my-3'><i>In order to get recommendations you need to follow people! :)</i></p>";
       }
     ?>
     </div>
   </div><!-- Ending People you may know -->
+  
+  <div class='card mb-4 shadow-sm'>
+    <div class='px-3 card-header' >
+      <h4 class="text-center m-0">Feedback:</h4>
+    </div>
+    <div class='card-body px-3 py-0 border-bottom'>
+       <p class="my-3">If you find any bugs please send me details about the bug and a screenshot at iosiflivadaru@yahoo.com. Thank you for using LivIt! :)</p>
+    </div>
+  </div><!-- Ending Feedback-->
+  
+  <p>&copy; 2019. Created by Iosif Livadaru</p>
 <?php
 }
 
@@ -560,11 +579,15 @@ function contestInfo() {?>
             <li>Contest lasts 7 days</li>
             <li>The rank system is based on the amount of stars you get on your post</li>
             <li>You can ONLY <strong>star</strong> current contest posts</li>
+          </ul>
             <hr>
+          <ul>
             <li>Rank 1: <img src='icons/contestToken.png' class='token' alt='Contest Token'><strong>20</strong></li>
             <li>Rank 2: <img src='icons/contestToken.png' class='token' alt='Contest Token'><strong>10</strong></li>
             <li>Rank 3: <img src='icons/contestToken.png' class='token' alt='Contest Token'><strong>5</strong></li>
+          </ul>
             <hr>
+          <ul>
             <li>Contest tokens can be used in the market</li>
           </ul>
         </div>

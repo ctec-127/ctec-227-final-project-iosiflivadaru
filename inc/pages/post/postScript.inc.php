@@ -68,6 +68,7 @@
         <!-- Submit Button -->
         <hr class="my-2">
         <button type="submit" class="btn bg-dark text-link w-auto float-right px-4" id="submit">Submit</button>
+        <img class='float-right mr-2 d-none' style='width:40px;' src='icons/loading.gif' alt='Loading' id='loading'>
       </form>
 
     </div><!-- col-md-8 End -->
@@ -132,11 +133,11 @@
       reader.onload = function(e) {
         $("#postImgTemp").remove();
         $("#alertNewImage").remove(); 
-        $("#imgBox").after(`<img class='d-block mx-auto img-fluid' style='width:500px; max-height:100%;' src='${e.target.result}' alt='User Image' id='postImgTemp'>`); 
+        $("#imgBox").append(`<img class='d-block mx-auto img-fluid' style='width:500px; max-height:100%;' src='${e.target.result}' alt='User Image' id='postImgTemp'>`); 
         var contest = $("#imgBox").attr("data-contest");
         if (contest != 1) {
         $("#joinContest").remove();
-        $("#imgLabel").after('<div class="custom-control custom-checkbox my-2" id="joinContest"><input type="checkbox" class="custom-control-input text-link" id="customControlAutosizing" name="contest"><label class="custom-control-label" for="customControlAutosizing">Join Contest <i>(you can only join once a week)</i></label></div>');
+        $("#imgLabel").append('<div class="custom-control custom-checkbox my-2" id="joinContest"><input type="checkbox" class="custom-control-input text-link" id="customControlAutosizing" name="contest"><label class="custom-control-label" for="customControlAutosizing">Join Contest <i>(you can only join once a week)</i></label></div>');
         }
       }
       reader.readAsDataURL(input.files[0]);
@@ -207,6 +208,7 @@
     if (desc != '' || img != '') {
       // console.log("hi")
       var formData = new FormData($('form')[0]);
+      $("#loading").removeClass("d-none");
       // AJAX request
       $.ajax({
         url: 'inc/pages/post/functionScript.inc.php',
@@ -220,24 +222,25 @@
           // if there are any errors coming from the script the following alerts will be displayed
           if (response == 'error1') {
             $("#alertNewImage").remove();     
-            $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center' role='alert' id='alertNewImage'>Your file is too big! Your Image should be less than 2MB!</div>");  
+            $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center' role='alert' id='alertNewImage'>Your file is too big! Your Image should be less than 25MB!</div>");  
           }
           if (response == 'error2') {
             $("#alertNewImage").remove();     
-            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>There was an error uploading your file!</div>");  
+            $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center' role='alert' id='alertNewImage'>There was an error uploading your file!</div>");  
           }
           if (response == 'error3') {
             $("#alertNewImage").remove();     
-            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Invalid file type! Only jpg, jpeg, and png files are allowed!</div>");  
+            $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center' role='alert' id='alertNewImage'>Invalid file type! Only jpg and jpeg files are allowed!</div>");  
           }
           if (response == 'password') {
             $("#alertNewImage").remove();     
-            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Passwords don't match!</div>");  
+            $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center' role='alert' id='alertNewImage'>Passwords don't match!</div>");  
           }
           if (response == 'email') {
             $("#alertNewImage").remove();     
-            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Email already in use!</div>");  
+            $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center' role='alert' id='alertNewImage'>Email already in use!</div>");  
           }
+          $("#loading").addClass("d-none");
         },
         contentType: false,
         processData: false

@@ -8,14 +8,13 @@
   }
 
   $getHashedPassword = "SELECT password FROM user WHERE email = '$email'";
-  echo $getHashedPassword;
   $result = $db->query($getHashedPassword);
   while ($row = $result->fetch_assoc()) { 
     $hashedPassword = $row['password'];
   }
 
   if (password_verify($password, $hashedPassword)) {
-    $sql = "SELECT id, first_name, last_name, profile_img, contest_join FROM user WHERE `email` = '$email' AND `password` = '$hashedPassword' LIMIT 1";
+    $sql = "SELECT id, first_name, last_name, profile_img, contest_join, email FROM user WHERE `email` = '$email' AND `password` = '$hashedPassword' LIMIT 1";
 
     $result = $db->query($sql);
     $row = $result->fetch_assoc();
@@ -28,13 +27,14 @@
       $_SESSION['contest'] = $row['contest_join'];
       if (isset($remember)) {
         setcookie('loggedIn', $row['id'], time() + (86400 * 90), "/");
+        setcookie('email', $row['email'], time() + (86400 * 90), "/");
       }
-      header("location: ../../../home.php");
+      echo "<meta http-equiv='refresh' content='0;url=http://www.iosiflivadaru.com/livit/home.php'>";
     }
   } else {
     $_SESSION['loggedIn']    = 0;
     $_SESSION['alert-login'] = 2;
-    header("location: ../../../index.php");
+    echo "<meta http-equiv='refresh' content='0;url=http://www.iosiflivadaru.com/livit/index.php'>";
   }
   
 ?>

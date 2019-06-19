@@ -44,17 +44,13 @@
 
 
 <!-- Mobile Navbar -->
-<nav class="navbar fixed-bottom d-sm-none navbar-light bg-dark px-0">
+<nav class="navbar fixed-bottom d-sm-none navbar-light bg-dark px-0 py-2">
 
-  <li class="d-inline-block mx-auto">
-    <a class="nav-link text-light py-0 <?= echoActiveClassIfRequestMatches("search");?>" href="search.php"><i class="fas fa-2x fa-search"></i></a>
-  </li>
-  <li class="d-inline-block mx-auto">
-    <a class="nav-link text-light py-0 <?= echoActiveClassIfRequestMatches("post");?>" href="post.php"><i class="far fa-2x fa-image"></i></a>
-  </li>
-  <li class="d-inline-block mx-auto">
-    <a class="nav-link text-light py-0 <?= echoActiveClassIfRequestMatches("profile");?>" href="profile.php"><i class="fas fa-2x fa-user"></i></a>
-  </li>
+    <a class="nav-link text-light py-1 <?= echoActiveClassIfRequestMatches("search");?>" href="search.php"><i class="fas fa-2x fa-search"></i></a>
+
+    <a class="nav-link text-light py-1 <?= echoActiveClassIfRequestMatches("post");?>" href="post.php"><i class="far fa-2x fa-image"></i></a>
+
+    <a class="nav-link text-light py-1 <?= echoActiveClassIfRequestMatches("profile");?>" href="profile.php"><i class="fas fa-2x fa-user"></i></a>
 
 </nav>
 

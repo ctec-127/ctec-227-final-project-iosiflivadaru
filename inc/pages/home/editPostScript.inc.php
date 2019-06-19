@@ -2,11 +2,17 @@
   require_once '../../shared/db_connect.php';
   session_start();
   if (isset($_GET['delete'])) {
+    $sql = "SELECT post_img, active FROM post WHERE id = {$_GET['delete']}";
+    $result = $db->query($sql);
+    $row = $result->fetch_assoc();
+    unlink("../../../img/posts/".$row['post_img']);
+    if ($row['active'] == 1) {
+      $sql = "UPDATE user SET contest_join = 0 WHERE id = {$_SESSION['id']}";
+      $result = $db->query($sql);
+      $_SESSION['contest'] = 0;
+    }
     $sql = "DELETE FROM post WHERE id = {$_GET['delete']}";
     $result = $db->query($sql);
-    $sql = "UPDATE user SET contest_join = 0 WHERE id = {$_SESSION['id']}";
-    $result = $db->query($sql);
-    $_SESSION['contest'] = 0;
     $currentPage = $_SESSION['currentEditPage'];
     header("location: ../../../".$currentPage);
   } else {

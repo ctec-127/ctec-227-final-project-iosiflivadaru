@@ -129,7 +129,7 @@ if ($_SESSION['loggedIn'] == 0) {
           }
           if (response == 'error3') {
             $("#alertNewImage").remove();     
-            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Invalid file type! Only jpg, jpeg, and png files are allowed!</div>");  
+            $("#imgBox").after("<div class='alert alert-danger mb-4 w-auto text-center' role='alert' id='alertNewImage'>Invalid file type! Only jpg and jpeg files are allowed!</div>");  
           }
           if (response == 'password') {
             $("#alertNewImage").remove();     

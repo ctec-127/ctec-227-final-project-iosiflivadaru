@@ -257,7 +257,7 @@ function edit($db) {
               } else if (item == 'error2') { 
                 $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center alertNewImage' role='alert' >There was an error uploading your file!</div>");  
               } else if (item == 'error3') { 
-                $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center alertNewImage' role='alert' >Invalid file type! Only jpg, jpeg, and png files are allowed!</div>");  
+                $("#imgBox").after("<div class='alert alert-danger my-3 w-auto text-center alertNewImage' role='alert' >Invalid file type! Only jpg and jpeg files are allowed!</div>");  
               } else if (item == 'password') { 
                 $("#passAlert").after("<div class='alert alert-danger mb-3 w-auto text-center alertNewImage' role='alert' >Passwords don't match!</div>");  
               } else if (item == 'wrongPass') { 

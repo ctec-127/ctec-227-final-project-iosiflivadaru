@@ -4,14 +4,29 @@ require_once 'inc/shared/config.php';
 require_once 'inc/shared/functions.php';
 require_once 'inc/shared/db_connect.php';
 
+if (!isset($_SESSION['loggedIn'])) {
+  $_SESSION['loggedIn'] = 0;
+}
+
 if (isset($_GET['loggedOut'])) {
   $_SESSION['loggedIn'] = 0;
   unset($_COOKIE['loggedIn']);
   setcookie('loggedIn', null, -1, '/');  
+  setcookie('email', null, -1, '/');  
   session_destroy();
 }
 if (isset($_COOKIE['loggedIn'])) {   
-  $_SESSION['loggedIn']    = 1;
+  $_SESSION['loggedIn'] = 1;
+  $sql = "SELECT id, first_name, last_name, profile_img, contest_join FROM user WHERE `email` = '{$_COOKIE['email']}' AND `id` = {$_COOKIE['loggedIn']} LIMIT 1";
+  $result = $db->query($sql);
+  $row = $result->fetch_assoc();
+  if (mysqli_num_rows($result) > 0) {
+    $_SESSION['id'] = $row['id'];
+    $_SESSION['firstName'] = $row['first_name'];
+    $_SESSION['lastName'] = $row['last_name'];
+    $_SESSION['profileImg'] = $row['profile_img'];
+    $_SESSION['contest'] = $row['contest_join'];
+  }
 }
 ?>
 <!DOCTYPE html>
